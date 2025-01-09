@@ -1,0 +1,17 @@
+apply plugin: 'com.android.library'
+
+
+android {
+    compileSdk libs.versions.compileSdk.get().toInteger()
+    defaultConfig {
+        minSdkVersion libs.versions.minSdk.get().toInteger()
+        targetSdkVersion libs.versions.targetSdk.get().toInteger()
+    }
+    namespace 'com.zzhoujay.richtext'
+}
+
+dependencies {
+    api project(":markdown")
+    implementation 'com.jakewharton:disklrucache:2.0.2'
+    implementation 'androidx.annotation:annotation:1.8.2'
+}
