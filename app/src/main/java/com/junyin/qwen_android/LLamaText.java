@@ -1,4 +1,4 @@
-package com.example.qwen_android;
+package com.junyin.qwen_android;
 
 public class LLamaText {
     String text = "";

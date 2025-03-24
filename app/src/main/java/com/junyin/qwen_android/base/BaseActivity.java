@@ -1,4 +1,4 @@
-package com.example.qwen_android.base;
+package com.junyin.qwen_android.base;
 
 import androidx.activity.ComponentActivity;
 
