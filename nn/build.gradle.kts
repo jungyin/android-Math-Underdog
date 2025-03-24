@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.junyin.nn"
+    namespace = "com.example.nn"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -35,23 +35,27 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    externalNativeBuild {
+        cmake {
+            version="3.10.2.4988404"
+            path=File("CMakeLists.txt")
+        }
+    }
+    ndkVersion="25.1.8937393"
 }
 chaquopy {
     defaultConfig {
         buildPython("C:\\Users\\30585\\AppData\\Local\\Programs\\Python\\Python311\\python.exe")
         pip {
             install("numpy")
+            install("Jinja2")
             install("scipy")
+            install("tokenizers")
         }
     }
 }
 dependencies {
 
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 
     androidTestImplementation(libs.onnx.runtime)
 }

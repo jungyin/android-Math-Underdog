@@ -1,7 +1,7 @@
-package com.junyin.qwen_android;
+package com.example.qwen_android;
 
-import static com.junyin.qwen_android.LLamaText.chatType;
-import static com.junyin.qwen_android.LLamaText.peopleType;
+import static com.example.qwen_android.LLamaText.chatType;
+import static com.example.qwen_android.LLamaText.peopleType;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -68,7 +68,6 @@ public class LLamaAdapter extends RecyclerView.Adapter<LLamaAdapter.LLamaHolder>
                 }
             }
         }).into(holder.tv);
-//        holder.tv.setText(item.text);
     }
 
     public void upDate(List<LLamaText> texts) {

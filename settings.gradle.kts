@@ -21,6 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "qwen_android"
 include(":app")
-include(":markdown")
-include(":richtext")
 include(":nn")

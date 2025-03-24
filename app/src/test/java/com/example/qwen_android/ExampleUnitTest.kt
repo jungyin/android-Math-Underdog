@@ -1,4 +1,4 @@
-package com.junyin.qwen_android
+package com.example.qwen_android
 
 import org.junit.Test
 

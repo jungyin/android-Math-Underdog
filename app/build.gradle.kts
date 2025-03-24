@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.junyin.qwen_android"
+    namespace = "com.example.qwen_android"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.junyin.qwen_android"
+        applicationId = "com.example.qwen_android"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
@@ -68,7 +68,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(project(":richtext"))
     implementation(project(":nn"))
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.google.code.gson:gson:2.10.1")
