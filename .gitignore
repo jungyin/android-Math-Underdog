@@ -1,6 +1,5 @@
 *.iml
 .gradle
-/.gradle
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -10,10 +9,12 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+/nn/src/main/python/model_file
+/nn/src/main/python/__pycache__
 /captures
 .externalNativeBuild
 .cxx
 local.properties
 *.onnx
-*.tflite
-*.torch
+*.pt
+*.pyc
