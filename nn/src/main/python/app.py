@@ -4,8 +4,6 @@ from services.long_connection_service import LongConnectionService
 
 app = Flask(__name__)
 
-
-
     
 @app.route("/getModelList",methods = ['POST'])
 def modelList():
