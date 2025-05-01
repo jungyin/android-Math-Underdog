@@ -4,11 +4,9 @@ from openvino.runtime import Core
 import time
 from torch.utils.data import Dataset
 
-onnx = "./qwen2-code-0.5b/onnx/model32.onnx"
-onnxllm = "./qwen2-code-0.5b/onnx/lm_model32.onnx"
+onnx = "./qwen2-code-0.5b/onnx/model.onnx"
 
-openvino = "./qwen2-code-0.5b/openvino_qint8/model32.xml"
-openvinollm = "./qwen2-code-0.5b/openvino/lm_model32.xml"
+openvino = "./qwen2-code-0.5b/openvino_qint8/model.xml"
 
 # ov_model = ov.convert_model(onnx,input=[("input_ids",[1,-1]),("attention_mask",[1,-1]),("position_ids",[1,-1])])
 

@@ -1,19 +1,12 @@
 from tokenizers import Tokenizer
-from tokenizers.models import BPE
-from tokenizers.pre_tokenizers import ByteLevel
-from tokenizers import AddedToken
-from tokenizers.processors import TemplateProcessing
 import numpy as np
-import pickle
-import jinja2
-from jinja2.exceptions import TemplateError
-from jinja2.sandbox import ImmutableSandboxedEnvironment
+
 import time
 
 # from testrun import QwenMoelRun
 # from qwen2run import QwenMoelRun
-from infer.qwen_0_5b.openvino_infer import QwenMoelRun
-# from infer.qwen_0_5b.onnx_infer import QwenMoelRun
+from infer.qwen.openvino_infer import QwenMoelRun
+# from infer.qwen.onnx_infer import QwenMoelRun
 
 # 读取 tokenizer_config.json 文件
 import json
@@ -34,65 +27,50 @@ def print_progress(ntoken,tokenizer,lstr =""):
 
 
   d_text = tokenizer.decode(ntoken[0],skip_special_tokens=True)
-  # lstr=lstr+d_text
-  # print(d_text, end='\r')
+ 
   print(d_text,end='')  # 打印字符但不换行，并立即刷新输出缓冲区
 
   return lstr
 
-model = QwenMoelRun()
+model_path = "d:/code/py/python/assets/qewn2/"
+# model_path = "D:\code\py\qwen\source\qwen2.5_1.5b_math/"
+model_path = "D:\code\\transformer_models\models--Qwen--Qwen2.5-3B-Instruct/"
+
 
 # 配置项
-tokenizer_json = './assets/tokenizer.json'
-config_path = "./assets/tokenizer_config.json"
+tokenizer_json = model_path+'tokenizer.json'
+config_path = model_path+"tokenizer_config.json"
 add_generation_prompt = True
 
+model = QwenMoelRun(model_path)
+
 # 测试数据
+# prompt= "请帮我写一个傅里叶变化公式,并使用python代码简单复现一下"
 prompt= "请帮我写一个傅里叶变化公式,并使用python代码简单复现一下"
-prompt = '请问a+b=3,a+a=2,a,b分别是多少'
-testtext =  '<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>assistant\n'
+# prompt = '请问a+b=3,a+a=2,a,b分别是多少'
+# prompt = "已知三角形 $ABC$ 的内切圆分别切边 $BC$, $CA$, $AB$ 于点 $D$, $E$, $F$。若 $AD$、$BE$、$CF$ 相交于一点 $I$（内心），求证：$$\frac{AI}{ID} + \frac{BI}{IE} + \frac{CI}{IF} = 2.$$"
+
 messages = [
-    {"role": "system", "content": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.","user":"yinjun"},
-    {"role": "user", "content": prompt,"user":"yinjun"}
+    # {"role": "system", "content": "你是一个可爱的猫娘，你的回答将在结尾添加一个喵来结束"},
+    {"role": "system", "content": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."},
+    {"role": "user", "content": prompt},
+    # {"role": "assistant", "content": "好的，我将为您提供如下结果的喵"},
+    # {"role": "user", "content": prompt}
 ]
 
-
-
-# 加载 tokenizer_config 文件
-with open(config_path, 'r', encoding='utf-8') as f:
-    config = json.load(f)
-
-chat_template = config['chat_template']
-
-def raise_exception(message):
-  raise TemplateError(message)
-
-jinja_env = ImmutableSandboxedEnvironment(trim_blocks=True, lstrip_blocks=True)
-jinja_env.globals["raise_exception"] = raise_exception
-compiled_template = jinja_env.from_string(chat_template)
-
-
-# 加载 tokenizer_config 文件
-with open(config_path, 'r', encoding='utf-8') as f:
-  config = json.load(f)
 
 
 rendered=[]
 
 conversations = [messages]
 
-template_kwargs = {
-  'eos_token' : config['eos_token'],
-  'pad_token' : config['pad_token'],
-  'additional_special_tokens':config['additional_special_tokens']
-}
 
 for chat in conversations:
   if hasattr(chat, "messages"):
       # Indicates it's a Conversation object
       chat = chat.messages
-  rendered_chat = compiled_template.render(
-      messages=chat, add_generation_prompt=add_generation_prompt, **template_kwargs
+  rendered_chat = model.compiled_template.render(
+      messages=chat, add_generation_prompt=add_generation_prompt, **model.template_kwargs
   )
   rendered.append(rendered_chat)
 
@@ -112,9 +90,10 @@ print(f"Token IDs: {encoding[0].ids}")
 
 input_ids = encoding[0].ids
 input_ids = np.array(input_ids,np.int64)
+
 output = model.generate(input_ids,print_progress,tokenizer)
 
-print()
+
 
 decoded_text = tokenizer.decode(encoding[0].ids)
 print(f"Decoded Text: {decoded_text}")
@@ -127,4 +106,6 @@ print("out text")
 print(d_text)
 
 
-print(1 / np.mean(np.array(times)))
+print(1 / np.mean(np.array(times)),np.sum(np.array(times)))
+
+# np.save("cache.npy",np.array(model.cacheinput,dtype=object))

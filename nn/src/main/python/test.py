@@ -2,8 +2,15 @@ from transformers import AutoTokenizer
 import torch
 # 初始化一个预训练的BERT tokenizer
 
+import onnx_tool
+
+
+model_path = 'D:\code\py\qwen\onnx\qwen2_3b_fp16\model.onnx' #本地模型
+
+onnx_tool.model_profile(model_path)
 
 model_id = "Qwen/Qwen2.5-Coder-3B-Instruct"
+model_id = "Qwen/Qwen2.5-3B"
 tokenizer = AutoTokenizer.from_pretrained(model_id, use_default_system_prompt=True)
 
 # 定义最大输入长度

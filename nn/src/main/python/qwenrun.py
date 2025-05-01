@@ -38,11 +38,13 @@ def print_progress(ntoken,tokenizer,lstr =""):
 
   return lstr
 
-model = QwenMoelRun()
+f_path = "./assets/"
+qwen_path = f_path+"qwen2/"
+model = QwenMoelRun(qwen_path+"config.json",qwen_path+"generation_config.json")
 
 # 配置项
-tokenizer_json = './assets/tokenizer.json'
-config_path = "./assets/tokenizer_config.json"
+tokenizer_json = qwen_path+'tokenizer.json'
+config_path = qwen_path+"tokenizer_config.json"
 add_generation_prompt = True
 
 # 测试数据
