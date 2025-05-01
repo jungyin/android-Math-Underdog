@@ -20,3 +20,7 @@ local.properties
 *.pyc
 *.npy
 *.bin
+/onnx
+/model_file
+/nn/src/main/python/export_model
+/nn/src/main/python/assets
