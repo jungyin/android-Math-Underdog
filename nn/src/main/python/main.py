@@ -32,7 +32,7 @@ def print_progress(ntoken,tokenizer,lstr =""):
 
   return lstr
 
-model_path = "d:/code/py/python/assets/qewn2/"
+model_path = "./assets/qewn2/"
 # model_path = "D:\code\py\qwen\source\qwen2.5_1.5b_math/"
 model_path = "D:\code\\transformer_models\models--Qwen--Qwen2.5-3B-Instruct/"
 
@@ -108,4 +108,4 @@ print(d_text)
 
 print(1 / np.mean(np.array(times)),np.sum(np.array(times)))
 
-# np.save("cache.npy",np.array(model.cacheinput,dtype=object))
+np.save("cache.npy",np.array(model.cacheinput,dtype=object))

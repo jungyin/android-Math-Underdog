@@ -29,7 +29,7 @@ def load_engine(trt_runtime, engine_path):
    return engine
 
 
-onnx_p = "D:\code\python\qwen\onnx\coder-0.5bfp32\model32.onnx"
-out_trt = "D:\code\python\qwen\\trt\coder-0.5bfp32\model.engine"
+onnx_p = "D:\code\py\qwen2demo_py\onnx\coder-0.5bfp32\model32.onnx"
+out_trt = "D:\code\py\qwen2demo_py\\trt\coder-0.5bfp32\model.engine"
 engine = build_engine(onnx_p)
 save_engine(engine,out_trt)

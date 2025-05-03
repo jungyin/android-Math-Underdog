@@ -46,7 +46,7 @@ class MyDataset(Dataset):
         input_data=  self.input_data[idx]
         # input_ids = input_data["input_ids"]
         input_ids = input_data["input_ids"]
-        p_a = mypre(input_ids,np.zeros_like(input_ids))
+        p_a = mypre(input_ids,np.ones_like(input_ids))
 
         return input_ids[0],p_a["attention_mask"][0],p_a["position_ids"][0],input_data["past_key_values"]
 
@@ -55,7 +55,7 @@ def transform_fn(data_item):
     images, label = data_item
 
     position_ids = torch.unsqueeze(torch.arange(0,images.shape[2]),0)
-    return images[0],torch.zeros_like(images[0]),position_ids
+    return images[0],torch.ones_like(images[0]),position_ids
 
 calibration_loader = torch.utils.data.DataLoader(MyDataset())
 calibration_dataset = nncf.Dataset(calibration_loader)
