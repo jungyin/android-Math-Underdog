@@ -5,6 +5,7 @@ import time
 
 # from testrun import QwenMoelRun
 # from qwen2run import QwenMoelRun
+# from infer.qwen.source_infer import QwenMoelRun
 from infer.qwen.openvino_infer import QwenMoelRun
 # from infer.qwen.onnx_infer import QwenMoelRun
 
@@ -105,7 +106,7 @@ d_text = tokenizer.decode(out,skip_special_tokens=True)
 print("out text")
 print(d_text)
 
-
+# 
 print(1 / np.mean(np.array(times)),np.sum(np.array(times)))
 
-np.save("cache.npy",np.array(model.cacheinput,dtype=object))
+# np.save("cache.npy",np.array(model.cacheinput,dtype=object))

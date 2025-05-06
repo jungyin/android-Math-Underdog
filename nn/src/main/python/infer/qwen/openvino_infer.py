@@ -11,7 +11,8 @@ class QwenMoelRun(BaseMoelRun):
          # 模型所在路径
         model = "qwen2-code-0.5b"
         model = "qwen2-3b"
-        model_type="openvino_qint8"
+        model_type="openvino"
+        # model_type="openvino_qint8"
         model_path = self.model_f  + model + "/" + model_type + "/" + "model.xml"
         
    
@@ -21,10 +22,10 @@ class QwenMoelRun(BaseMoelRun):
 
         devices = core.available_devices
         device = 'CPU'
-        if 'NPU' in devices and False:
-            device = 'NPU'
-        elif 'GPU'in devices:
-            device = 'GPU'
+        # if 'NPU' in devices and False:
+        #     device = 'NPU'
+        # elif 'GPU'in devices:
+        #     device = 'GPU'
         self.device = device
         self.device = "GPU"
 
@@ -60,10 +61,10 @@ class QwenMoelRun(BaseMoelRun):
 
         
         needpk = inputs["past_key_values"].shape[-2]!=0
-        # if(len( self.cacheinput)<200):
-        #     self.cacheinput .append ({"input_ids":inputs['input_ids'],"past_key_values":inputs["past_key_values"]})
-        # else:
-        #     self.stopGenerate()
+        if(len( self.cacheinput)<500):
+            self.cacheinput .append ({"input_ids":inputs['input_ids'],"past_key_values":inputs["past_key_values"]})
+        else:
+            self.stopGenerate()
 
         input_ids = ov.Tensor(array = inputs["input_ids"],shared_memory=True)
         attention_mask = ov.Tensor(array = inputs["attention_mask"],shared_memory=True)

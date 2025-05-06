@@ -1,6 +1,7 @@
 
 import numpy as np
 import onnxruntime as ort
+from jinja2.exceptions import TemplateError
 from onnxruntime.capi import _pybind_state as C
 from .base_infer import BaseMoelRun
 import time
@@ -12,8 +13,9 @@ class QwenMoelRun(BaseMoelRun):
         model_type="onnx"
         # model_type="onnx_qint8"
         self.model_path = self.model_f + model + "/" + model_type + "/" + "model32.onnx"
-        # self.model_path = "D:\code\py\qwen\onnx\math-1.5b\model.onnx"
-        self.model_path = "D:\code\py\qwen\onnx\qwen2_3b\model.onnx"
+        # self.model_path = "D:\code\py\qwen2demo_py\onnx\math-1.5b\model.onnx"
+        self.model_path = "D:/code\py\qwen2demo_py\onnx\qwen2_3b\model.onnx"
+
         session_options = ort.SessionOptions()
         session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL
         # session_options.enable_cuda_graph = True  # 如果需要启用 CUDA 图形优化

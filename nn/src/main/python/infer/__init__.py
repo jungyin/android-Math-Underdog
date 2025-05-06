@@ -1,16 +1,18 @@
 from tokenizers import Tokenizer
-from .qwen import onnx_infer as qwen0_5b_onnx,openvino_infer as qwen0_5b_openvino 
+from .qwen import onnx_infer as qwen0_5b_onnx,openvino_infer as qwen0_5b_openvino ,source_infer as qwen0_5b_torch
 from .qwen.base_infer import BaseMoelRun as lmBaseModel
 from .llm_utils import LmActionType
 import numpy as np
 from threading import Thread
 import time
+print("开始")
 # 状态值
 STATUS = LmActionType.NOTLOAD
 # 注册所有的服务模块
 llm_model_list = {
     'qwen0_5b_onnx':{"model":qwen0_5b_onnx,"model_path" :'./assets/qewn2/'},
     'qwen0_5b_openvino':{"model":qwen0_5b_openvino,"model_path" :'./assets/qewn2/'},
+    'qwen0_5b_torch':{"model":qwen0_5b_torch,"model_path" :'./assets/qewn2/'},
 }
 
 local_token:Tokenizer = None
@@ -175,11 +177,12 @@ def thread_speak(context):
 
     # 将本轮模型的输出结果和用户的对话结果记录下来
     cc = np.array(cacheTimes)
+    cc=np.nan_to_num(cc,0)
     mean_tokens = 1 / np.mean(cc)
     sum_tokens = np.sum(cc)
 
-    mean_tokens=np.nan_to_num(mean_tokens,0)
-    sum_tokens=np.nan_to_num(sum_tokens,0)
+   
+    # sum_tokens=np.nan_to_num(sum_tokens,0)
 
     message.append({"role": "user", "content": context})
     message.append({"role": "assistant", "content": output,"mean_tokens" :mean_tokens,"sum_tokens":sum_tokens})

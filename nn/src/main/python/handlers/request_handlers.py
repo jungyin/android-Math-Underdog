@@ -2,7 +2,7 @@
 from flask import  jsonify      
 import infer
 import numpy as np
-infer.select_llm_model("qwen0_5b_openvino")
+infer.select_llm_model("qwen0_5b_torch")
 
 def llm_select(req):
     """
@@ -41,8 +41,8 @@ def get_llm_out(req):
     """
 
     lstr,mean_token,sum_tokens=infer.get_laststr()
-    mean_token=np.nan_to_num(mean_token,0)
-    sum_tokens=np.nan_to_num(sum_tokens,0)
+    # mean_token=np.nan_to_num(mean_token,0)
+    # sum_tokens=np.nan_to_num(sum_tokens,0)
 
     return jsonify({"msg":f"surcess read!",
                     "data":{"context":lstr,"mean_tokens":mean_token,"sum_tokens":sum_tokens,"status":infer.get_status()}}),200

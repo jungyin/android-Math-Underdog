@@ -3,7 +3,7 @@ from np_logits.logits_process import RepetitionPenaltyLogitsProcessor,Temperatur
 import numpy as np
 from nputils import softmax,multinomial_numpy
 from ..base_transformer import BaseMoel
-
+import torch
 class BaseMoelRun(BaseMoel):
     def __init__(self,model_assets):
         super().__init__(model_assets)
@@ -149,8 +149,13 @@ class BaseMoelRun(BaseMoel):
         self.run_gen = True
         while(not this_peer_finished) and self.run_gen:    
             outputs = self.runForCausalLM(input_ids,past_key_values)
-            logits = outputs[0].astype(np.float32)
+            logits = outputs[0]
             past_key_values = outputs[1]
+
+            if(logits is np.array):
+                logits = logits.astype(np.float32)
+            elif logits is torch.Tensor:
+                logits =logits.to(torch.float32)
 
             next_token_logits = logits[:,-1,:]
             next_token_scores = self.logits_processor(input_ids, next_token_logits)
