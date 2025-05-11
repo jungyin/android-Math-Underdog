@@ -5,8 +5,8 @@ import time
 
 # from testrun import QwenMoelRun
 # from qwen2run import QwenMoelRun
-# from infer.qwen.source_infer import QwenMoelRun
-from infer.qwen.openvino_infer import QwenMoelRun
+from infer.qwen.source_infer import QwenMoelRun
+# from infer.qwen.openvino_infer import QwenMoelRun
 # from infer.qwen.onnx_infer import QwenMoelRun
 
 # 读取 tokenizer_config.json 文件
@@ -30,7 +30,6 @@ def print_progress(ntoken,tokenizer,lstr =""):
   d_text = tokenizer.decode(ntoken[0],skip_special_tokens=True)
  
   print(d_text,end='')  # 打印字符但不换行，并立即刷新输出缓冲区
-
   return lstr
 
 model_path = "./assets/qewn2/"
@@ -40,14 +39,14 @@ model_path = "D:\code\\transformer_models\models--Qwen--Qwen2.5-3B-Instruct/"
 
 # 配置项
 tokenizer_json = model_path+'tokenizer.json'
-config_path = model_path+"tokenizer_config.json"
+config_path = model_path+"tokenizer_config.json"  
 add_generation_prompt = True
 
-model = QwenMoelRun(model_path)
 
 # 测试数据
-# prompt= "请帮我写一个傅里叶变化公式,并使用python代码简单复现一下"
-prompt= "请帮我写一个傅里叶变化公式,并使用python代码简单复现一下"
+prompt= "请帮我写一个傅里叶变化公式,并使用python代码简单复现一下."
+prompt= "请帮我使用vue写一个helloworld"
+# prompt= "请帮我写一个傅里叶变化公式"
 # prompt = '请问a+b=3,a+a=2,a,b分别是多少'
 # prompt = "已知三角形 $ABC$ 的内切圆分别切边 $BC$, $CA$, $AB$ 于点 $D$, $E$, $F$。若 $AD$、$BE$、$CF$ 相交于一点 $I$（内心），求证：$$\frac{AI}{ID} + \frac{BI}{IE} + \frac{CI}{IF} = 2.$$"
 
@@ -66,6 +65,19 @@ rendered=[]
 conversations = [messages]
 
 
+
+# 前处理一下输入内容
+tokenizer = Tokenizer.from_file(tokenizer_json)
+
+out_code = np.load("out_code.npy")
+
+out_str = []
+
+# for code in out_code:
+out_str.append(tokenizer.decode([out_code[8][0]],skip_special_tokens=True))
+
+
+model = QwenMoelRun(model_path)
 for chat in conversations:
   if hasattr(chat, "messages"):
       # Indicates it's a Conversation object
@@ -76,8 +88,6 @@ for chat in conversations:
   rendered.append(rendered_chat)
 
 
-# 前处理一下输入内容
-tokenizer = Tokenizer.from_file(tokenizer_json)
 
 # 测试编码和解码
 encoding = tokenizer.encode_batch(

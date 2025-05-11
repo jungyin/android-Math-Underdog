@@ -9,12 +9,13 @@ class QwenMoelRun(BaseMoelRun):
     def __init__(self,model_assets):
         super().__init__(model_assets)
          # 模型所在路径
-        model = "qwen2-code-0.5b"
+        # model = "qwen2-code-0.5b"
+        model = "qwen2-3b"
         model_type="onnx"
         # model_type="onnx_qint8"
-        self.model_path = self.model_f + model + "/" + model_type + "/" + "model32.onnx"
+        self.model_path = self.model_f + model + "/" + model_type + "/" + "model.onnx"
         # self.model_path = "D:\code\py\qwen2demo_py\onnx\math-1.5b\model.onnx"
-        self.model_path = "D:/code\py\qwen2demo_py\onnx\qwen2_3b\model.onnx"
+        # self.model_path = "D:/code\py\qwen2demo_py\onnx\qwen2_3b\model.onnx"
 
         session_options = ort.SessionOptions()
         session_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_DISABLE_ALL

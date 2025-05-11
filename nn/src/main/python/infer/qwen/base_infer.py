@@ -148,6 +148,7 @@ class BaseMoelRun(BaseMoel):
         past_key_values = None
         self.run_gen = True
         while(not this_peer_finished) and self.run_gen:    
+            first = False
             outputs = self.runForCausalLM(input_ids,past_key_values)
             logits = outputs[0]
             past_key_values = outputs[1]
