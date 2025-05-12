@@ -19,7 +19,8 @@ def multinomial_numpy(probs, num_samples=1):
     # 对每个样本单独采样
     for i in range(batch_size):
         # 使用 numpy.random.choice 按照概率分布采样
-        next_tokens[i] = np.random.choice(vocab_size, size=num_samples, p=probs[i], replace=True)
+        work_num =  np.random.choice(vocab_size, size=num_samples, p=probs[i], replace=True)
+        next_tokens[i] =work_num[0]
     return next_tokens.squeeze()  # 如果 num_samples=1，则去掉多余的维度
 
 def masked_fill (x,mask,full_value):
