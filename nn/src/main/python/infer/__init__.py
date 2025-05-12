@@ -173,7 +173,7 @@ def thread_speak(context):
     output = llm_model.generate(input_ids,progress,local_token)
     output  = local_token.decode(output,skip_special_tokens=True)
     STATUS = LmActionType.STOP
-    laststr = output
+    # laststr = output
 
     # 将本轮模型的输出结果和用户的对话结果记录下来
     cc = np.array(cacheTimes)
@@ -181,11 +181,13 @@ def thread_speak(context):
     mean_tokens = 1 / np.mean(cc)
     sum_tokens = np.sum(cc)
 
-   
-    # sum_tokens=np.nan_to_num(sum_tokens,0)
+    if(np.isnan(mean_tokens)):
+        mean_tokens = 0.0
+    if(np.isnan(sum_tokens)):
+        sum_tokens = 0.0
 
     message.append({"role": "user", "content": context})
-    message.append({"role": "assistant", "content": output,"mean_tokens" :mean_tokens,"sum_tokens":sum_tokens})
+    message.append({"role": "assistant", "content": laststr,"mean_tokens" :mean_tokens,"sum_tokens":sum_tokens})
 
 def speak(context):
     """

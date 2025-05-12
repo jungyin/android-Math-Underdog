@@ -36,7 +36,7 @@ class BaseMoel():
         self.has_default_min_length = self.min_length is not None
 
         # 最长tokean数
-        self.max_new_tokens=512
+        self.max_new_tokens=1024
         # 由于没有限制最小长度，这里配为0
         self. min_length = 0
         if ("temperature" in generation_config):

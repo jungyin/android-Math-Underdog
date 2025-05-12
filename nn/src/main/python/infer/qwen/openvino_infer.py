@@ -1,7 +1,7 @@
 import numpy as np
 from openvino.runtime import Core
 from .base_infer import BaseMoelRun
-import openvino as ov
+import openvino.runtime as ov
 
 class QwenMoelRun(BaseMoelRun):
     def __init__(self,model_assets):
@@ -9,7 +9,7 @@ class QwenMoelRun(BaseMoelRun):
 
     
          # 模型所在路径
-        model = "qwen2-code-0.5b"
+        # model = "qwen2-code-0.5b"
         model = "qwen2-3b"
         model_type="openvino"
         # model_type="openvino_qint8"
@@ -22,10 +22,10 @@ class QwenMoelRun(BaseMoelRun):
 
         devices = core.available_devices
         device = 'CPU'
-        # if 'NPU' in devices and False:
-        #     device = 'NPU'
-        # elif 'GPU'in devices:
-        #     device = 'GPU'
+        if 'NPU' in devices and False:
+            device = 'NPU'
+        elif 'GPU'in devices:
+            device = 'GPU'
         self.device = device
         self.device = "GPU"
 
@@ -55,21 +55,23 @@ class QwenMoelRun(BaseMoelRun):
 
     # 这里模拟ForCausalLM方法
     def runForCausalLM(self ,input_ids,past_key_values=None):
+        # if(not (past_key_values is None)):
+        #     past_key_values = past_key_values[:,:,:,:,:-1,:]
+
+
         inputs = self.prepare_inputs_for_generation(input_ids,None,None,past_key_values,None)
 
-        chunk = input_ids[-1]
-
-        
-        needpk = inputs["past_key_values"].shape[-2]!=0
-        if(len( self.cacheinput)<500):
-            self.cacheinput .append ({"input_ids":inputs['input_ids'],"past_key_values":inputs["past_key_values"]})
-        else:
-            self.stopGenerate()
-
-        input_ids = ov.Tensor(array = inputs["input_ids"],shared_memory=True)
-        attention_mask = ov.Tensor(array = inputs["attention_mask"],shared_memory=True)
-        position_ids = ov.Tensor(array = inputs["position_ids"],shared_memory=True)
-        past_key_values = ov.Tensor(array = inputs["past_key_values"],shared_memory=True)
+        # if(len( self.cacheinput)<500):
+        #     self.cacheinput .append ({"input_ids":inputs['input_ids'],"past_key_values":inputs["past_key_values"]})
+        # else:
+        #     self.stopGenerate()
+       
+       
+        shared_memory = True
+        input_ids = ov.Tensor(array = inputs["input_ids"],shared_memory=shared_memory)
+        attention_mask = ov.Tensor(array = inputs["attention_mask"],shared_memory=shared_memory)
+        position_ids = ov.Tensor(array = inputs["position_ids"],shared_memory=shared_memory)
+        past_key_values = ov.Tensor(array = inputs["past_key_values"],shared_memory=shared_memory)
         # past_key_values = ov.Tensor(array = np.ones([24,2,1,2,46,64],dtype=np.float32),shared_memory=True)
         
         infer_request = self.model.create_infer_request()
@@ -78,18 +80,21 @@ class QwenMoelRun(BaseMoelRun):
         infer_request.set_tensor("position_ids",position_ids)
         # if needpk:
         infer_request.set_tensor("past_key_values.1",past_key_values)
-        infer_request.infer()
+        infer_request.infer(share_inputs= shared_memory,share_outputs=shared_memory)
 
         output_tensor_names = self.model.outputs
 
-        output = infer_request.get_tensor(output_tensor_names[0])
-        past_key_values = infer_request.get_tensor(output_tensor_names[1])
+        output = infer_request.get_tensor(output_tensor_names[0]).data
+        past_buffer = infer_request.get_tensor(output_tensor_names[1]).data
+        
+        del input_ids
+        del position_ids
+        del attention_mask
+        del past_key_values
+        del output_tensor_names
+        del infer_request
 
-
-        output_buffer = ov.Tensor(array = output.data,shared_memory=True).data
-        past_buffer = ov.Tensor(array = past_key_values.data,shared_memory=True).data
-
-        return output_buffer,past_buffer
+        return output,past_buffer
 
 if __name__ == "__main__":
     qwen = QwenMoelRun()
