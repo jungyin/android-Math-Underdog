@@ -16,21 +16,31 @@ outstrs = ""
 
 t1 = 0
 times = []
+dstr = []
+dids = []
 def print_progress(ntoken,tokenizer,lstr =""):
   """
   调用本函数将打印一个基于当前迭代次数的进度条。
   """
   global t1
+  global dstr
+  global dids
   if(t1!=0):
     t2 = time.time() - t1
     times.append(t2)
   t1 =time.time()
+  dids.append(ntoken[0][0])
+  di = np.array(dids)
+  d_text = tokenizer.decode(di,skip_special_tokens=True)
+  dstr.append(d_text)
+  if("�" in d_text):
+    d_text = ""
+  else:
+    dids=[]
+     
 
-
-  d_text = tokenizer.decode(ntoken[0],skip_special_tokens=True)
- 
   print(d_text,end='')  # 打印字符但不换行，并立即刷新输出缓冲区
-  return lstr
+  return d_text
 
 model_path = "./assets/qewn2/"
 # model_path = "D:\code\py\qwen\source\qwen2.5_1.5b_math/"
@@ -44,7 +54,7 @@ add_generation_prompt = True
 
 
 # 测试数据
-prompt= "请帮我写一个傅里叶变化公式,并使用python代码简单复现一下."
+prompt= "请帮我写一个傅里叶变化公式,并使用python代码简单复现一下"
 prompt= "请帮我使用vue写一个helloworld"
 # prompt= "请帮我写一个傅里叶变化公式"
 # prompt = '请问a+b=3,a+a=2,a,b分别是多少'
@@ -69,12 +79,12 @@ conversations = [messages]
 # 前处理一下输入内容
 tokenizer = Tokenizer.from_file(tokenizer_json)
 
-out_code = np.load("out_code.npy")
+# out_code = np.load("out_code.npy")
 
 out_str = []
 
 # for code in out_code:
-out_str.append(tokenizer.decode([out_code[8][0]],skip_special_tokens=True))
+# out_str.append(tokenizer.decode([out_code[8][0]],skip_special_tokens=True))
 
 
 model = QwenMoelRun(model_path)

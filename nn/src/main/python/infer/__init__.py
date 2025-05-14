@@ -21,6 +21,8 @@ llm_model :lmBaseModel = None
 llm_system_connect = ""
 
 laststr = ""
+# 缓存模型输出的ids，防止一些字符需要多个id拼接才能正常转译成功
+cache_ids = []
 message :list = []
 cache_token_size = 512
 # 这个label用于判定有没有内容输出，每当输出成功一轮信息，它就会重新变为True
@@ -118,14 +120,27 @@ def progress(ntoken,tokenizer,lstr):
     params tokenizer : 用于解码的token
     """
     global laststr
+    global cache_ids 
     global STATUS
     global cacheNow
     STATUS = LmActionType.CONTINUE
-    laststr += tokenizer.decode(ntoken[0],skip_special_tokens=True)
+    
 
     time123 = time.time()-cacheNow
     cacheTimes.append(time123)  
     cacheNow = time.time()
+    cache_ids.append(ntoken[0][0])
+
+    dstr =  tokenizer.decode(cache_ids,skip_special_tokens=True)
+    if("�" in dstr):
+        dstr = ""
+    else:
+        cache_ids=[]
+        laststr += dstr
+
+
+    return laststr
+
 
 
 def thread_speak(context):
