@@ -12,6 +12,7 @@ class QwenMoelRun(BaseMoelRun):
         # 模型所在路径
         model_f = "D:\\code\\transformer_models\\"
         model = "models--Qwen--Qwen2.5-3B-Instruct"
+        model = "models--Qwen--Qwen2.5-0.5B-Instruct"
         self.model_path = model_f + model
 
 

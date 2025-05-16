@@ -5,8 +5,8 @@ import time
 from torch.utils.data import Dataset
 
 onnx = "./qwen2-code-0.5b/onnx/model.onnx"
-
-openvino = "./qwen2-code-0.5b/openvino_qint8/model.xml"
+onnx = "D:/code/py/qwen2demo_py/onnx/qwen2_0.5b_test/model.onnx"
+openvino = "./qwen2-code-0.5b/openvino_test/model.xml"
 
 # ov_model = ov.convert_model(onnx,input=[("input_ids",[1,-1]),("attention_mask",[1,-1]),("position_ids",[1,-1])])
 
@@ -31,10 +31,9 @@ device = 'CPU'
 # npu不允许动态输入长度
 chunk = -1
 # 如果要用npu，就上个512固定
-chunk = 512
+chunk = 1024
 
 model = core.read_model(model=openvino)
-llm_model = core.read_model(model=openvinollm)
 
 
 input_shapes = {
@@ -49,10 +48,8 @@ input_shapes = {
     "input_0": ov.PartialShape([1, chunk,896]),
 }
 
-llm_model.reshape(input_shapes)
 
 compiled_model = core.compile_model(model, device)
-compiled_llm_model = core.compile_model(llm_model, device)
 time123 = 0
 for i in range(0,150):
 

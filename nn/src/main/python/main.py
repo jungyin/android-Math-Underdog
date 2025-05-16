@@ -5,8 +5,9 @@ import time
 
 # from testrun import QwenMoelRun
 # from qwen2run import QwenMoelRun
-from infer.qwen.source_infer import QwenMoelRun
+# from infer.qwen.source_infer import QwenMoelRun
 # from infer.qwen.openvino_infer import QwenMoelRun
+from infer.qwen.openvino_npu_infer import QwenMoelRun
 # from infer.qwen.onnx_infer import QwenMoelRun
 
 # 读取 tokenizer_config.json 文件
