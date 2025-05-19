@@ -4,13 +4,20 @@ import numpy as np
 from nputils import softmax,multinomial_numpy
 from ..base_transformer import BaseMoel
 import torch
+import os 
+import psutil 
+from memory_profiler import profile
 class BaseMoelRun(BaseMoel):
     def __init__(self,model_assets):
         super().__init__(model_assets)
         self.runmode = "sample"
         # self.runmode = "greedy_search"
+        self.cacheinput = []
         past_key_value_type = np.float32
         self.empty_past_key_value = self._build_past_key_value(past_key_value_type)
+
+        pid  = os.getpid()
+        self.process = psutil.Process(pid)
 
     def _build_past_key_value(self,dtype:np.dtype = np.float16):
         
@@ -25,7 +32,7 @@ class BaseMoelRun(BaseMoel):
         return np.zeros([num_hidden_layers,kvszie]+qvshape,dtype=dtype)
 
 # 预处理 qwen2的输入数据
-    def prepare_inputs_for_generation(self, input_ids,position_ids=None, attention_mask=None, past_key_values=None,  inputs_embeds=None):
+    def prepare_inputs_for_generation(self, input_ids,position_ids=None, attention_mask=None, past_key_values=None,  inputs_embeds=None,past_length = None):
 
         if attention_mask is None:
             attention_mask = np.ones_like(input_ids,dtype=np.int64)
@@ -34,7 +41,8 @@ class BaseMoelRun(BaseMoel):
         if(past_key_values is None):
             past_length = 0
         else:
-            past_length = past_key_values[0][0].shape[2]
+            if(past_length is None):
+                past_length = past_key_values[0][0].shape[2]
 
         # Keep only the unprocessed tokens:
         # 1 - If the length of the attention_mask exceeds the length of input_ids, then we are in a setting where
@@ -97,15 +105,22 @@ class BaseMoelRun(BaseMoel):
         for criteria in  criterias:
             is_done = is_done | criteria(inputids, next_token_scores)
         return is_done
-    
+   
     # 这里模拟ForCausalLM方法
+    @profile
     def runForCausalLM(self ,input_ids,past_key_values=None):
         pass
 
     # 停止本轮生成
     def stopGenerate(self):
         self.run_gen = False
+    def get_process_memory_usage(self):
 
+        # 获取进程的内存信息
+        memory_info = self.process.memory_info()
+        # print(f"RSS: {memory_info.rss / (1024 ** 2):.2f} MB")  # RSS - Resident Set Size
+        # print(f"VMS: {memory_info.vms / (1024 ** 2):.2f} MB")  # VMS - Virtual Memory Size
+        return memory_info.rss / 1024 **2  # 返回实际使用的物理内存大小
     def generate(self,input_ids,stream=None,tokenizer = None):
        
         input_ids = np.array(input_ids)
@@ -147,10 +162,26 @@ class BaseMoelRun(BaseMoel):
         lstr=''
         past_key_values = None
         self.run_gen = True
+
+        i = 0
+        ci = []
         while(not this_peer_finished) and self.run_gen:    
             first = False
             outputs = self.runForCausalLM(input_ids,past_key_values)
+
+            # umemey = 0
+            # mem = self.get_process_memory_usage()
+            # if(len(self.cacheinput) > 1):
+                # umemey = mem - self.cacheinput[1]["memory"]
+            # ci.append ({"memory":mem ,"use":umemey})
+
+            # if(i >= 150):
+            #     print(self.cacheinput)
+            #     self.stopGenerate()
+            # i+=1
             logits = outputs[0]
+            del past_key_values
+            
             past_key_values = outputs[1]
 
             if(logits is np.array):
@@ -186,6 +217,7 @@ class BaseMoelRun(BaseMoel):
             unfinished_sequences = unfinished_sequences &  endv
             this_peer_finished = unfinished_sequences.max() == 0
             input_ids = input_ids
+        # self.cacheinput .append(ci)
         #这里结束推理，进行下一步操作
         return input_ids[0][input_ids_length:]
     
