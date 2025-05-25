@@ -9,7 +9,7 @@ import pickle
 from torch .utils.data import Dataset
 import numpy as np
 
-from infer.qwen_0_5b.base_infer import BaseMoelRun
+from infer.qwen.openvino_infer import BaseMoelRun
 
 openvino = "./model_file/qwen2-code-0.5b/openvino/model32.xml"
 openvino_int8 = "./model_file/qwen2-code-0.5b/openvino_qint8/model32.xml"

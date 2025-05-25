@@ -5,7 +5,7 @@ from nputils import softmax,multinomial_numpy
 from ..base_transformer import BaseMoel
 import cv2
 
-
+import time
 class BaseMoelRun(BaseMoel):
     def __init__(self,model_assets):
         super().__init__(model_assets)
@@ -66,8 +66,9 @@ class BaseMoelRun(BaseMoel):
         
         input_frame = self.build_frame(frame)
 
-
+        ctime = time.time()
         encode = self.encoder(input_frame)
+        print("检查1：",time.time()-ctime)
 
         input_ids = np.array([[0]])
         batch_size, seq_length = input_ids.shape
@@ -104,6 +105,8 @@ class BaseMoelRun(BaseMoel):
             unfinished_sequences = unfinished_sequences &  endv
             this_peer_finished = unfinished_sequences.max() == 0
             input_ids = input_ids
+            
+        print("检查2：",time.time()-ctime)
         #这里结束推理，进行下一步操作
         return input_ids[0]
     

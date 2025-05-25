@@ -10,7 +10,7 @@ from jinja2.exceptions import TemplateError
 from jinja2.sandbox import ImmutableSandboxedEnvironment
 import time
 
-from testrun import QwenMoelRun
+from demo.testrun import QwenMoelRun
 from qwen2run import QwenMoelRun
 
 # 读取 tokenizer_config.json 文件

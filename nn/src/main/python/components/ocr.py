@@ -5,9 +5,13 @@ import requests
 import cv2
 import numpy as np
 import torch
-from infer.latex_ocr.onnx_infer import LatexMoelRun
+import sys
 
-p = "D:\\code\\android\\android-Math-Underdog\\nn\\src\\main\\python\\assets\\latex_ocr/"
+from infer.latex_ocr.openvino_infer import LatexMoelRun
+  
+# from infer.latex_ocr.onnx_infer import LatexMoelRun
+
+p = "./assets/latex_ocr/"
 img = "test.png"
 
 
@@ -21,6 +25,7 @@ out = model.greedy_search(frame)
 tokenizer = tokenizer = AutoTokenizer.from_pretrained(p, max_len=296)
 
 moutstr = tokenizer.decode(out)
-print(moutstr.replace('\\[','\\begin{align*}').replace('\\]','\\end{align*}'))
+print("原始:",moutstr)
+print("结束",moutstr.replace('\\[','\\begin{align*}').replace('\\]','\\end{align*}'))
 
 print(1)

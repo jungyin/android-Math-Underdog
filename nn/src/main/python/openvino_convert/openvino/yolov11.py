@@ -30,7 +30,7 @@ model = core.read_model(model=openvino)
 
 compiled_model = core.compile_model(model, device)
 time123 = 0
-for i in range(0,150):
+for i in range(0,250):
 
     # gpu及cpu允许动态输入长度
     # chunk = 47 + i

@@ -2,7 +2,7 @@
 from flask import  jsonify      
 import infer
 import numpy as np
-infer.select_llm_model("qwen0_5b_torch")
+infer.select_llm_model("qwen0_5b_openvino")
 
 def llm_select(req):
     """

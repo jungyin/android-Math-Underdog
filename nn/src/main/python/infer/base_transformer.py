@@ -50,19 +50,26 @@ class BaseMoel():
         self.model_f = "./model_file/"
 
 
-        chat_template = token_config['chat_template']
-        self.template_kwargs = {
-        'eos_token' : token_config['eos_token'],
-        'pad_token' : token_config['pad_token'],
-        'additional_special_tokens':token_config['additional_special_tokens']
-        }
-
         def raise_exception(message):
             raise TemplateError(message)
-
         jinja_env = ImmutableSandboxedEnvironment(trim_blocks=True, lstrip_blocks=True)
         jinja_env.globals["raise_exception"] = raise_exception
-        self.compiled_template = jinja_env.from_string(chat_template)
+        if('chat_template' in token_config):
+            chat_template = token_config['chat_template']
+            self.compiled_template = jinja_env.from_string(chat_template)
+        else:
+            self.compiled_template = None
+        self.template_kwargs = {
+            'eos_token' : token_config['eos_token'],
+            'pad_token' : token_config['pad_token'],
+        }
+        if("additional_special_tokens" in token_config):
+           self.template_kwargs["additional_special_tokens"]  = token_config['additional_special_tokens']
+
+
+
+       
+       
 
     def _dict_from_json_file(self, json_file):
         with open(json_file, "r", encoding="utf-8") as reader:

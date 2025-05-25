@@ -7,11 +7,23 @@ import time
 # from qwen2run import QwenMoelRun
 # from infer.qwen.source_infer import QwenMoelRun
 from infer.qwen.openvino_infer import QwenMoelRun
+from infer.latex_ocr.openvino_infer import LatexMoelRun
 # from infer.qwen.openvino_npu_infer import QwenMoelRun
 # from infer.qwen.onnx_infer import QwenMoelRun
-
+from transformers import AutoTokenizer
 # 读取 tokenizer_config.json 文件
 import json
+from components.screenshot import start_screenshot_ocr
+# p = "./assets/latex_ocr/"
+
+# tokenizer = AutoTokenizer.from_pretrained(p, max_len=296)
+# ocr_model = LatexMoelRun(p)
+
+# frame = start_screenshot_ocr(ocr_model,tokenizer)
+
+
+# ocrstr_ids = ocr_model.greedy_search(frame)
+# ocrstr = tokenizer.decode(ocrstr_ids)
 
 outstrs = ""
 
@@ -50,10 +62,7 @@ model_path = "D:\code\\transformer_models\models--Qwen--Qwen2.5-3B-Instruct/"
 
 # 配置项
 tokenizer_json = model_path+'tokenizer.json'
-config_path = model_path+"tokenizer_config.json"  
 add_generation_prompt = True
-
-
 # 测试数据
 prompt= "请帮我写一个傅里叶变化公式,并使用python代码简单复现一下"
 # prompt= "旧金山天气如何？"

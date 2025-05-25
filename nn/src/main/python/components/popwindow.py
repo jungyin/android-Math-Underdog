@@ -4,14 +4,16 @@ from PyQt5.QtCore import Qt, QRect, QPoint, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView,QWebEngineProfile
 from PyQt5.QtGui import QKeySequence
 import os
+import functools
 # 设置环境变量以启用详细的日志记录
-os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--enable-logging --v=1'
-os.environ['QT_LOGGING_RULES'] = 'qt.webengine.*=true'
+# os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = '--enable-logging --v=1'
+# os.environ['QT_LOGGING_RULES'] = 'qt.webengine.*=true'
 class FloatingWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.drag_position = QPoint()  # 存储拖拽时鼠标相对于窗口左上角的位置
         self.initUI()
+ 
 
     def initUI(self):
         # 设置窗口无边框和透明背景
@@ -58,7 +60,7 @@ class FloatingWindow(QWidget):
 
         # 创建并配置QWebEngineView
         self.web_view = QWebEngineView(self)
-        self.web_view.setUrl(QUrl("http://localhost:8081/"))  # 替换为你想展示的网址
+        self.web_view.setUrl(QUrl("http://localhost:8080/"))  # 替换为你想展示的网址
 
         # 设置QWebEngineView填充剩余空间
         main_layout.addWidget(self.web_view)
@@ -70,9 +72,16 @@ class FloatingWindow(QWidget):
             QSizePolicy.Expanding
         )
 
-        # 快捷键触发显示/隐藏窗口
-        show_hide_shortcut = QShortcut(QKeySequence('Ctrl+Shift+W'), self)
+    def bindquick(self,qf,bindquick:dict={}):
+         # 快捷键触发显示/隐藏窗口
+        show_hide_shortcut = QShortcut(QKeySequence('Ctrl+Shift+Q'), self)
         show_hide_shortcut.activated.connect(self.toggle_visibility)
+
+        for key, value in bindquick.items():
+            shortcut = QShortcut(QKeySequence(key), self)
+            shortcut.activated.connect(value)
+
+
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -97,6 +106,10 @@ class FloatingWindow(QWidget):
             self.setWindowFlags(flags & ~Qt.WindowStaysOnTopHint)
         else:
             self.setWindowFlags(flags | Qt.WindowStaysOnTopHint)
+        self.show()
+    def bindtop(self):
+        flags = self.windowFlags()
+        self.setWindowFlags(flags | Qt.WindowStaysOnTopHint)
         self.show()
 
 
