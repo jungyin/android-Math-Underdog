@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
-
 @dataclass
 class MCPRequest:
     """MCP请求结构"""
@@ -22,3 +21,5 @@ class ToolDescription:
     description: str
     parameters: Dict[str, Any]
     required_params: List[str] 
+
+

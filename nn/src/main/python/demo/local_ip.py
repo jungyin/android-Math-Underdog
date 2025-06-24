@@ -108,5 +108,6 @@ def get_weather_amap(key,citycode,extensions='base', sig=None):
 if __name__ == "__main__":
     location_info = get_location_amap(ali_map_key)
     print(location_info)
-    location_info = get_weather_amap(ali_map_key,location_info["adcode"])
+    location_info = get_weather_amap(ali_map_key,location_info["adcode"]).get("lives")[0]
     print(location_info)
+    k=10

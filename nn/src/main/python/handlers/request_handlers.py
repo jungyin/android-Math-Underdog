@@ -1,8 +1,12 @@
 
 from flask import  jsonify      
-import infer
+import infer.interface_api as infer
 import numpy as np
-infer.select_llm_model("qwen0_5b_openvino")
+
+
+infer.select_llm_model("qwen0_5b_torch")
+# infer.select_llm_model("qwen0_5b_openvino")
+
 
 def llm_select(req):
     """
@@ -15,6 +19,7 @@ def llm_select(req):
         return jsonify({"msg":f"surcess select this {modelkey} model!"}),200
     else:
         return jsonify({"msg":f"eror!cannot check this model:{modelkey}"}),500
+
 
 def set_system_context(req):
     """
@@ -42,13 +47,15 @@ def get_llm_out(req):
 
     lstr,mean_token,sum_tokens=infer.get_laststr()
    
-    if(np.isnan(mean_token)):
+    if(np.isnan(mean_token) or np.isinf(mean_token)):
         mean_token = 0.0
-    if(np.isnan(sum_tokens)):
+    if(np.isnan(sum_tokens) or np.isinf(mean_token)):
         sum_tokens = 0.0
-
-    return jsonify({"msg":f"surcess read!",
-                    "data":{"context":lstr,"mean_tokens":mean_token,"sum_tokens":sum_tokens,"status":infer.get_status()}}),200
+    try:
+        return jsonify({"msg":f"surcess read!",
+                    "data":{"context":lstr,"mean_tokens":float(mean_token),"sum_tokens":float(sum_tokens),"status":infer.get_status()}}),200
+    except Exception as e:
+        print (e)
 
 def get_llm_history(req):
     """
@@ -84,7 +91,10 @@ def speek(req):
             return jsonify({"msg":f"error! message:{rstr} "}),500
     else:
         return jsonify({"msg":f"eror! check model faile"}),500
-    
+
+def get_system_context(req):
+    return jsonify({"msg":f"surcess! ","data":infer.load_system_context()}),200
+
 def llm_models(req):
     """
     获取可用模型的列表

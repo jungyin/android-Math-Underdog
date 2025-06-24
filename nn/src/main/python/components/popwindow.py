@@ -22,7 +22,7 @@ class FloatingWindow(QWidget):
 
         # 获取屏幕尺寸并设置窗口大小
         screen_geometry = QApplication.desktop().screenGeometry()
-        window_width = screen_geometry.width() // 5
+        window_width = screen_geometry.width() // 3
         window_height = screen_geometry.height() // 2
         self.setGeometry(QRect(screen_geometry.width() - window_width, 0, window_width, window_height))
 

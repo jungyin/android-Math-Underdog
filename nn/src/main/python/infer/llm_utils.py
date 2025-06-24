@@ -12,3 +12,4 @@ class LmActionType():
     OTHERING = 5
     # 未加载模型
     NOTLOAD = 6
+

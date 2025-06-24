@@ -1,7 +1,7 @@
 from flask import Flask, request
 import handlers.request_handlers as net_interface
 from services.long_connection_service import LongConnectionService
-
+import infer.interface_api as infer
 app = Flask(__name__)
 
     
@@ -36,7 +36,12 @@ def setSystemContext():
 @app.route("/speek",methods = ['POST'])
 def speek():
     return net_interface.speek(request)
+@app.route("/getSystemContext",methods = ['GET'])
+def getSystemContext():
+    return net_interface.get_system_context(request)
 
 if __name__ == '__main__':
     # app.run(host='192.168.10.191', port=5090)
+    infer.init()
+    
     app.run(host='localhost', port=5090)

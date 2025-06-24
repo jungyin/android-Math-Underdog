@@ -8,7 +8,7 @@ from infer.latex_ocr.openvino_infer import LatexMoelRun
 import keyboard
 import sys
 import time
-
+import pyperclip
 
 class QuickTools(QObject):
     showNewPageSignal = pyqtSignal(int)
@@ -28,8 +28,15 @@ class QuickTools(QObject):
     def img_callback(self,im):
         ocrstr_ids = self.math_ocr_model.greedy_search(im)
        
-        ocrstr = self.math_ocr_token.decode(ocrstr_ids)
-       
+        ocrstr:str = self.math_ocr_token.decode(ocrstr_ids)
+        
+
+        if(ocrstr.startswith("<s><s>") and ocrstr.endswith("</s>")):
+                ocrstr = self.math_ocr_model.process_mixed_content(ocrstr)[0]
+                pyperclip.copy(ocrstr)
+        else:
+            pyperclip.copy("无法识别该公式")
+
         print(ocrstr)
         self.screenshot.close()
         self.screenshot = None
@@ -67,7 +74,12 @@ if __name__ == '__main__':
 
     def quick_function(key:str):
         if(key=='math_ocr'):
-            work_str = tool.ocr_screenshot()
+            work_str:str = tool.ocr_screenshot()
+            if(work_str.startswith("<s><s>") and work_str.endswith("</s>")):
+                pyperclip.copy(work_str)
+            else:
+                pyperclip.copy("无法识别该公式")
+
             print(work_str)
         else:
             pass
