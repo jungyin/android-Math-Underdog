@@ -1,65 +1,126 @@
-import re
-import json
+import cv2
 
-def process_mixed_content(full_string):
-    """
-    处理包含特殊标签和数学公式的混合字符串。
+def get_camera_properties(camera_index=0):
+    cap = cv2.VideoCapture(camera_index) # 0 表示默认摄像头，如果有多摄像头可以尝试 1, 2 等
+    if not cap.isOpened():
+        print(f"无法打开摄像头 {camera_index}")
+        return
 
-    Args:
-        full_string (str): 包含 <s><s>, </s> 和 \[ \] 数学公式的字符串。
+    print(f"--- 摄像头 {camera_index} 支持的参数 ---")
 
-    Returns:
-        list: 一个列表，每个元素是一个字典，表示文本块或公式块，
-              例如：[{"type": "text", "content": "..."}] 或
-              [{"type": "formula", "content": "..."}]
-    """
-    # 1. 移除最外层的 <s><s> 和 </s> 标签
-    cleaned_string = full_string.replace("<s><s>", "").replace("</s>", "").strip()
+    # 获取当前分辨率
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    print(f"当前分辨率: {width}x{height}")
 
-    # 2. 定义正则表达式来匹配数学公式块（包括其前后的空白符），并捕获公式内容
-    # re.DOTALL 确保 . 匹配包括换行符在内的所有字符
-    # 外层捕获组 () 是为了让 re.split 保留分隔符本身
-    math_formula_pattern = r'(\s*\\\[.*?\\\]\s*)'
+    # 获取当前帧率
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    print(f"当前帧率 (FPS): {fps}")
 
-    # 使用 re.split() 分割文本，因为模式有捕获组，所以匹配到的分隔符也会保留在结果列表中
-    parts = re.split(math_formula_pattern, cleaned_string, flags=re.DOTALL)
+    # 获取当前亮度 (如果支持)
+    brightness = cap.get(cv2.CAP_PROP_BRIGHTNESS)
+    print(f"当前亮度: {brightness}")
 
-    results = []
-    for part in parts:
-        part_stripped = part.strip() # 先去除当前片段的空白符
+    # 获取当前对比度 (如果支持)
+    contrast = cap.get(cv2.CAP_PROP_CONTRAST)
+    print(f"当前对比度: {contrast}")
 
-        if not part_stripped:
-            continue # 跳过完全空白的片段
+    # 获取当前饱和度 (如果支持)
+    saturation = cap.get(cv2.CAP_PROP_SATURATION)
+    print(f"当前饱和度: {saturation}")
 
-        # 判断是否是数学公式块
-        if part_stripped.startswith('\\[') and part_stripped.endswith('\\]'):
-            # 这是一个数学公式，移除 \[ 和 \]
-            formula_content = part_stripped[2:-2].strip()
-            results.append({"type": "formula", "content": formula_content})
-        else:
-            # 这是普通文本
-            results.append({"type": "text", "content": part_stripped})
+    # 获取当前曝光 (如果支持)
+    exposure = cap.get(cv2.CAP_PROP_EXPOSURE)
+    print(f"当前曝光: {exposure}")
 
-    return results
+    # 获取当前白平衡 (如果支持)
+    white_balance_blue_u = cap.get(cv2.CAP_PROP_WHITE_BALANCE_BLUE_U)
+    print(f"当前白平衡 (蓝): {white_balance_blue_u}")
+    # white_balance_red_v = cap.get(cv2.CAP_PROP_WHITE_BALANCE_RED_V) # 某些摄像头可能支持
+    # print(f"当前白平衡 (红): {white_balance_red_v}")
 
-# 您的原始字符串
-text_data = """<s><s>
- \[
-\frac{1\prod_{j,k}^{p}[p,L1]} = \frac{t_{j,k+\widetilde p-1}-t_{j,k+1}}{t_{j,k+\widetilde p}-t_{j,k}} \stackrel{\*}{\* d*j,k[i]}\,,
- \]
-otocols that employ the XOR operator can be modeled by th
- \[
-\mathrm{eu}\,\,\mathbb{H}^{*}\left(S_{-d}^{3}(K),a\right)=-\sum_{\substack{j\equiv a(\mathrm{mod{ d}})\\ 0\leq j\leq M}}\mathrm{~eu}\,\,\mathbb{H}^{*}\left(T_{j},W\right).
- \]</s>"""
+    # 获取焦距 (如果支持且摄像头是可变焦的)
+    # OpenCV 没有直接的 CAP_PROP_FOCAL_LENGTH, 通常焦距是相机内部参数，不直接暴露给用户控制
+    # 如果您的摄像头支持软件变焦，可能需要查阅其SDK或尝试其他更底层的库
 
-processed_content = process_mixed_content(text_data)
+    # 尝试设置分辨率 (不保证所有摄像头都支持任意分辨率设置)
+    # 注意：设置分辨率需要在 cap.read() 之前
+    # desired_width = 1280
+    # desired_height = 720
+    # cap.set(cv2.CAP_PROP_FRAME_WIDTH, desired_width)
+    # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, desired_height)
+    # print(f"\n尝试设置分辨率为 {desired_width}x{desired_height}")
+    # print(f"实际分辨率: {int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))}x{int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))}")
 
-print(json.dumps(processed_content, indent=2, ensure_ascii=False))
+    # 尝试设置帧率
+    # desired_fps = 30
+    # cap.set(cv2.CAP_PROP_FPS, desired_fps)
+    # print(f"尝试设置帧率为 {desired_fps}")
+    # print(f"实际帧率: {cap.get(cv2.CAP_PROP_FPS)}")
 
-# 遍历并打印结果
-print("\n--- 遍历处理后的内容 ---")
-for item in processed_content:
-    if item['type'] == 'text':
-        print(f"文本: {item['content']}")
-    elif item['type'] == 'formula':
-        print(f"公式: {item['content']}")
+    # 尝试设置曝光 (负值表示自动曝光，正值表示手动曝光值)
+    # cap.set(cv2.CAP_PROP_EXPOSURE, -6) # 自动曝光
+    # cap.set(cv2.CAP_PROP_EXPOSURE, -5) # 示例手动曝光值，具体范围取决于摄像头
+    # print(f"尝试设置曝光为 {cap.get(cv2.CAP_PROP_EXPOSURE)}")
+
+    # 获取支持的分辨率列表 (OpenCV 没有直接的方法获取所有支持的分辨率)
+    # 通常需要尝试设置常见分辨率来判断，或者查阅摄像头制造商的文档。
+    # 某些摄像头驱动可能会在 CAP_PROP_FORMAT 或其他属性中提供 hint。
+    print("\n注意：OpenCV 没有直接获取所有支持分辨率列表的 API。")
+    print("通常需要通过尝试设置来验证，或查阅相机驱动/SDK文档。")
+
+    # 读取并显示一帧画面
+    ret, frame = cap.read()
+    if ret:
+        cv2.imshow("Camera Feed", frame)
+        cv2.waitKey(1) # 等待1毫秒，确保窗口显示
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+# 调用函数获取和设置摄像头参数
+get_camera_properties(1) # 尝试获取第一个摄像头
+
+times = []
+
+def set_camera_fps(camera_index=0, desired_fps=120):
+    cap = cv2.VideoCapture(camera_index) # 0 表示默认摄像头，如果有多摄像头可以尝试 1, 2 等
+
+    if not cap.isOpened():
+        print(f"错误：无法打开摄像头 {camera_index}")
+        return
+
+    print(f"尝试将摄像头 {camera_index} 的帧率设置为 {desired_fps} FPS...")
+
+    # 尝试设置帧率
+    cap.set(cv2.CAP_PROP_FPS, desired_fps)
+
+    # 获取实际设置的帧率
+    actual_fps = cap.get(cv2.CAP_PROP_FPS)
+    print(f"实际帧率 (FPS): {actual_fps}")
+
+    if actual_fps >= desired_fps:
+        print(f"成功将帧率设置为或接近 {desired_fps} FPS。")
+    else:
+        print(f"未能将帧率设置为 {desired_fps} FPS。实际帧率为 {actual_fps} FPS。")
+        print("这可能是因为您的摄像头或其驱动不支持所请求的帧率。")
+
+    # 你可以继续读取帧来验证
+    import time
+    ret = True
+    time123 =time.time()
+    import numpy as np
+    while (ret and len(times)<360):
+        
+        ret, frame = cap.read()
+        if ret:
+            cv2.imshow("Camera Feed", frame)
+            cv2.waitKey(1)
+
+        cap.release()
+        cv2.destroyAllWindows()
+        times.append(time.time()-time123)
+    print("平均耗时",np.mean(np.array(times)))
+# 调用函数尝试设置第一个摄像头的帧率为 120 FPS
+set_camera_fps(0, 120)
+

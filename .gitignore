@@ -20,6 +20,8 @@ local.properties
 *.pyc
 *.npy
 *.bin
+*.txt
+*.trie
 /onnx
 /model_file
 /nn/src/main/python/export_model

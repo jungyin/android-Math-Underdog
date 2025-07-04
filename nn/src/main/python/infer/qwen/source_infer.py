@@ -10,10 +10,11 @@ class QwenMoelRun(BaseMoelRun):
     def __init__(self,model_assets):
         super().__init__(model_assets)
         # 模型所在路径
-        model_f = "D:\\code\\transformer_models\\"
-        model = "models--Qwen--Qwen2.5-3B-Instruct"
+        # model_f = "D:\\code\\transformer_models\\"
+        # model = "models--Qwen--Qwen2.5-3B-Instruct"
         # model = "models--Qwen--Qwen2.5-0.5B-Instruct"
-        self.model_path = model_f + model
+        # self.model_path = model_f + model
+        self.model_path = model_assets
 
 
         model = AutoModelForCausalLM.from_pretrained(

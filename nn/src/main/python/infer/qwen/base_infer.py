@@ -6,7 +6,6 @@ from ..base_transformer import BaseMoel
 import torch
 import os 
 import psutil 
-from memory_profiler import profile
 class BaseMoelRun(BaseMoel):
     def __init__(self,model_assets):
         super().__init__(model_assets)
@@ -106,10 +105,6 @@ class BaseMoelRun(BaseMoel):
             is_done = is_done | criteria(inputids, next_token_scores)
         return is_done
    
-    # 这里模拟ForCausalLM方法
-    @profile
-    def runForCausalLM(self ,input_ids,past_key_values=None):
-        pass
 
     # 停止本轮生成
     def stopGenerate(self):
