@@ -1,5 +1,7 @@
 
-from infer.qwen.source_infer import QwenMoelRun
+
+from infer.qwen.base_infer import BaseMoelRun 
+import numpy as np
 
 DEFAULT_SYSTEM_PROMPT='''你是一名搜索优化专家，擅长改写用户查询，使其更适合搜索引擎处理。'''
 DEFAULT_REWRITE_PROMPT='''
@@ -15,43 +17,51 @@ DEFAULT_REWRITE_PROMPT='''
 **扩展后的关键词组：**
 '''
 class LLMRewriter():
-    def __init__(self,llm_model:BaseModel=None,system_prompt=DEFAULT_SYSTEM_PROMPT,rewrite_prompt=DEFAULT_REWRITE_PROMPT):
+    def __init__(self,tokenizer,llm_model:BaseMoelRun=None,system_prompt=DEFAULT_SYSTEM_PROMPT,rewrite_prompt=DEFAULT_REWRITE_PROMPT):
         self.llm_model = llm_model
         self.system_prompt = system_prompt
         self.rewrite_prompt = rewrite_prompt
+        self.tokenizer = tokenizer
     def rewrite(self, query):
 
         prompt = self.rewrite_prompt.format(query=query)
         # print(prompt)
         messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": prompt}
+            {"role": "system", "content": "你是qwen3"},
+            {"role": "user", "content":"你是谁" }
         ]
-        text = self.llm_model.tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True
-        )
-        print(text)
-        model_inputs = self.llm_model.tokenizer([text], return_tensors="pt").to(self.llm_model.device)
+        rendered_chat = self.llm_model.compiled_template.render(messages=messages, add_generation_prompt=True, **self.llm_model.template_kwargs)
+        rendered = []
+        rendered.append(rendered_chat)
+        model_inputs = self.tokenizer.encode_batch(
+            rendered,
+            add_special_tokens=True,
+            is_pretokenized=False,
+        )[0]
 
-        generated_ids = self.llm_model.model.generate(
-            model_inputs.input_ids,
-            max_new_tokens=1024,
-            do_sample=False,
-            top_k=10
-        )
-        generated_ids = [
-            output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
-        ]
-        response = self.llm_model.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+        input_ids = model_inputs.ids
+        input_ids = np.array(input_ids,np.int64)
+      
+        output = model.generate(input_ids,None,None)
+        d_text = tokenizer.decode(output,skip_special_tokens=True)
+        
+
+    
+        response =d_text
         return response
 
 
 if __name__ == '__main__':
+    
+    from infer.qwen.source_infer import QwenMoelRun
+    from tokenizers import Tokenizer
 
-    model = QwenChat("D:/code/transformer_models/models--Qwen--Qwen2.5-Coder-3B-Instruct-GPTQ-Int8")
-    llm_rewriter = LLMRewriter(model)
+    # mpath = "D:/code/transformer_models/models--Qwen--Qwen2.5-Coder-3B-Instruct-GPTQ-Int8/"
+    mpath = "D:/code/transformer_models/models--Qwen--Qwen2.5-Coder-0.5B-Instruct-GPTQ-Int8/"
+
+    tokenizer = Tokenizer.from_file(mpath+"tokenizer.json")
+    model = QwenMoelRun(mpath)
+    llm_rewriter = LLMRewriter(tokenizer,model)
     # response=llm_rewriter.rewrite(query="如何提高英语口语？")
     response=llm_rewriter.rewrite(query="请总结伊朗总统罹难事件")
     print(response)

@@ -10,7 +10,7 @@
 import os
 import loguru
 
-from infer.qwen.source_infer import QwenMoelRun
+from infer.qwen.base_infer import BaseMoelRun as QwenMoelRun
 
 from rag.citation.match_citation import MatchCitation
 from rag.document.common_parser import CommonParser
@@ -19,7 +19,7 @@ from rag.reranker.bge_reranker import BgeReranker
 from rag.retrieval.dense_retriever import DenseRetriever
 from rag.document.chunk import TextChunker
 from rag.vector.embedding import FlagModelEmbedding
-from rag.quick_llm import LLMJudger
+from rag.quick_llm import llm_judger_local
 from rag.rewriter.llm_rewriter_local import LLMRewriter
 from rag.retrieval.web_retriever import DuckduckSearcher
 
@@ -30,18 +30,18 @@ class ApplicationConfig():
 
 
 class RagApplication():
-    def __init__(self, config):
+    def __init__(self,llm_model, config):
         self.config = config
         self.parser = CommonParser()
         self.embedding_generator = FlagModelEmbedding(self.config.retriever_config.model_name_or_path)
         self.retriever = DenseRetriever(self.config.retriever_config,self.embedding_generator)
         self.reranker = BgeReranker(self.config.rerank_config)
-        self.llm = QwenMoelRun(self.config.llm_model_path)
-        self.llm_judger = LLMJudger(self.llm)
+        self.llm = llm_model
+        self.llm_judger = llm_judger_local(llm_model)
         self.mc = MatchCitation()
         self.tc=TextChunker()
         self.web_searcher = DuckduckSearcher(proxy="socks5h://127.0.0.1:1080", timeout=20)
-        self.llm_rewriter = LLMRewriter(self.llm)
+        self.llm_rewriter = LLMRewriter(llm_model)
     def init_vector_store(self):
         """
 

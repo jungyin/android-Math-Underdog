@@ -5,7 +5,7 @@ import time
 
 # from testrun import QwenMoelRun
 # from qwen2run import QwenMoelRun
-# from infer.qwen.source_infer import QwenMoelRun
+from infer.qwen.source_infer import QwenMoelRun
 # from infer.qwen.openvino_infer import QwenMoelRun
 from infer.latex_ocr.openvino_infer import LatexMoelRun
 # from infer.qwen.openvino_npu_infer import QwenMoelRun
@@ -57,7 +57,8 @@ def print_progress(ntoken,tokenizer,lstr =""):
 
 model_path = "./assets/qewn2/"
 # model_path = "D:\code\py\qwen\source\qwen2.5_1.5b_math/"
-model_path = "D:\code\\transformer_models\models--Qwen--Qwen2.5-3B-Instruct/"
+# model_path = "D:\code\\transformer_models\models--Qwen--Qwen2.5-3B-Instruct/"
+model_path = "D:\code\\transformer_models\models--Qwen--Qwen2.5-Coder-0.5B-Instruct-GPTQ-Int8/"
 
 
 # 配置项

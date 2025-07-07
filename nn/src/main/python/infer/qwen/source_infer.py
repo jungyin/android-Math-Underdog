@@ -39,6 +39,8 @@ class QwenMoelRun(BaseMoelRun):
             output = self.model(torch.from_numpy(inputs["input_ids"]).to(self.device),torch.from_numpy(inputs["attention_mask"]).to(self.device),torch.from_numpy(inputs["position_ids"]).to(self.device),past_key_values)
  
             return output[0].cpu().detach().to(torch.float32).numpy(),output[1]
+        
+    
 
 if __name__ == "__main__":
     qwen = QwenMoelRun()

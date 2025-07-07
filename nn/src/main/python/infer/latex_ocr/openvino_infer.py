@@ -3,7 +3,6 @@ from openvino.runtime import Core
 from .base_infer import BaseMoelRun
 import openvino.runtime as ov
 import psutil
-from memory_profiler import profile
 import os 
 class LatexMoelRun(BaseMoelRun):
     def __init__(self,model_assets):
