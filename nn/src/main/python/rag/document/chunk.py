@@ -1,6 +1,6 @@
 import re
 from tqdm import tqdm
-from rag.document.utils import rag_tokenizer
+from rag.document import rag_tokenizer
 
 
 class TextChunker:

@@ -113,16 +113,12 @@ class LocalClient:
                 request = MCPRequest(**data)
                 response = await self.handle_request(request)
                 await self.websocket.send(json.dumps(vars(response)))
-                print("走完了")
-            print("为什么循环结束了？")
         except websockets.exceptions.ConnectionClosed:
             print("Connection to server closed")
         finally:
             if self.websocket:
                 await self.websocket.close()
-                print("自然死亡，奇怪")
 
 if __name__ == "__main__":
     client = LocalClient()
     asyncio.run(client.start()) 
-    print("走万恶了")

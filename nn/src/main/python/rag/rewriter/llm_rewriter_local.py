@@ -27,14 +27,13 @@ class LLMRewriter():
         prompt = self.rewrite_prompt.format(query=query)
         # print(prompt)
         messages = [
-            {"role": "system", "content": "你是qwen3"},
-            {"role": "user", "content":"你是谁" }
+            {"role": "system", "content": self.system_prompt},
+            {"role": "user", "content":prompt }
         ]
         rendered_chat = self.llm_model.compiled_template.render(messages=messages, add_generation_prompt=True, **self.llm_model.template_kwargs)
-        rendered = []
-        rendered.append(rendered_chat)
+   
         model_inputs = self.tokenizer.encode_batch(
-            rendered,
+            [rendered_chat],
             add_special_tokens=True,
             is_pretokenized=False,
         )[0]
@@ -43,11 +42,8 @@ class LLMRewriter():
         input_ids = np.array(input_ids,np.int64)
       
         output = model.generate(input_ids,None,None)
-        d_text = tokenizer.decode(output,skip_special_tokens=True)
+        response = tokenizer.decode(output,skip_special_tokens=True)
         
-
-    
-        response =d_text
         return response
 
 

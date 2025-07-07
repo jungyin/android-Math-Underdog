@@ -6,6 +6,8 @@ from ..base_transformer import BaseMoel
 import torch
 import os 
 import psutil 
+from prompt.templates import CHAT_PROMPT_TEMPLATES,SYSTEM_PROMPT
+from typing import Dict, List, Any
 class BaseMoelRun(BaseMoel):
     def __init__(self,model_assets):
         super().__init__(model_assets)
@@ -116,6 +118,11 @@ class BaseMoelRun(BaseMoel):
         # print(f"RSS: {memory_info.rss / (1024 ** 2):.2f} MB")  # RSS - Resident Set Size
         # print(f"VMS: {memory_info.vms / (1024 ** 2):.2f} MB")  # VMS - Virtual Memory Size
         return memory_info.rss / 1024 **2  # 返回实际使用的物理内存大小
+    
+
+    def set_tokenizer(self,tokenizer):
+        self.tokenizer = tokenizer
+
     def generate(self,input_ids,stream=None,tokenizer = None):
        
         input_ids = np.array(input_ids)
@@ -216,3 +223,38 @@ class BaseMoelRun(BaseMoel):
         #这里结束推理，进行下一步操作
         return input_ids[0][input_ids_length:]
     
+    def chat(self, prompt: str, history:List=None, content: str = '', llm_only: bool = False) -> tuple[Any, Any]:
+        if llm_only:
+            prompt = prompt
+        else:
+            prompt = CHAT_PROMPT_TEMPLATES['GLM_PROMPT_TEMPALTE'].format(system_prompt=SYSTEM_PROMPT, question=prompt,
+                                                                    context=content)
+        prompt = prompt.encode("utf-8", 'ignore').decode('utf-8', 'ignore')
+        print(prompt)
+
+        if(history[0]["role"] == 'system'):
+            history[0]["content"] = prompt
+        else:
+            history.insert(0,{"role":"system","content":prompt})
+
+        newContent = {"role":"user","content":content}
+        history.append(newContent)
+
+        rendered_chat = self.compiled_template.render(messages=history, add_generation_prompt=True, **self.template_kwargs)
+
+        model_inputs = self.tokenizer.encode_batch(
+            [rendered_chat],
+            add_special_tokens=True,
+            is_pretokenized=False,
+        )[0]
+
+
+        input_ids = model_inputs.ids
+        input_ids = np.array(input_ids,np.int64)
+      
+        output = self.generate(input_ids,None,None)
+        response = self.tokenizer.decode(output,skip_special_tokens=True)
+
+        history.append({"role":"assistant","content":response})
+
+        return response,history

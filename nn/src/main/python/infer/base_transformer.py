@@ -6,7 +6,6 @@ import os
 import json
 from jinja2.exceptions import TemplateError
 from jinja2.sandbox import ImmutableSandboxedEnvironment
-
 class BaseMoel():
     def __init__(self,model_assets):
 
@@ -65,14 +64,10 @@ class BaseMoel():
         }
         if("additional_special_tokens" in token_config):
            self.template_kwargs["additional_special_tokens"]  = token_config['additional_special_tokens']
-
-
-
        
-       
-
     def _dict_from_json_file(self, json_file):
         with open(json_file, "r", encoding="utf-8") as reader:
             text = reader.read()
         return json.loads(text)
     
+

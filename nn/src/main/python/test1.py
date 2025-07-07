@@ -1,5 +1,16 @@
 import cv2
 
+
+import numpy as np
+
+k1 = np.zeros([1,30])
+k2 = np.zeros([20,30])
+bias = np.zeros([1,20])
+k3 = k1  @ k2 .T
+k3 =  k3+bias
+print(k3.shape)
+
+
 def get_camera_properties(camera_index=0):
     cap = cv2.VideoCapture(camera_index) # 0 表示默认摄像头，如果有多摄像头可以尝试 1, 2 等
     if not cap.isOpened():

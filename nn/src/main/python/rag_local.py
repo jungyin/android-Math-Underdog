@@ -6,11 +6,19 @@ from rag.rag import RagApplication,ApplicationConfig
 from rag.reranker.bge_reranker import BgeRerankerConfig
 from rag.retrieval.dense_retriever import DenseRetrieverConfig
 from prompt import templates
+from infer.qwen.source_infer import QwenMoelRun
+
+from tokenizers import Tokenizer
 
 
 sys_prompt = templates.SYSTEM_PROMPT
 question = "请给出一个关于如何使用RAG的例子"
 
+llm_model_path = "D:/code/transformer_models/models--Qwen--Qwen2.5-3B-Instruct/"
+
+model = QwenMoelRun(llm_model_path)
+tokenizers = Tokenizer.from_file(llm_model_path+"tokenizer.json")
+model.set_tokenizer(tokenizers)
 
 app_config = ApplicationConfig()
 app_config.docs_path = "./docs"
