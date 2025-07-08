@@ -3,7 +3,8 @@ from docx import Document
 import re
 import pandas as pd
 from collections import Counter
-from rag.document.utils import rag_tokenizer
+from rag.document import rag_tokenizer
+
 from io import BytesIO
 
 

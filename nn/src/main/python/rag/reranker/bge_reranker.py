@@ -16,7 +16,7 @@ from typing import List, Any
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-from trustrag.modules.reranker.base import BaseReranker
+from rag.reranker.base import BaseReranker
 
 
 class BgeRerankerConfig:

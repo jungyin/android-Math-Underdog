@@ -22,7 +22,11 @@ class DuckduckSearcher:
         :param top_k: Maximum number of results to return, default is 5
         :return: List of search results, each result is a dictionary with keys 'title', 'href', and 'body'
         """
-        results = self.ddgs.text(query, max_results=top_k)
+        try:
+            results = self.ddgs.text(query, max_results=top_k)
+        except Exception as e:
+            print(f"Error, DuckduckSearcher retrieving results: {e}")
+            results = []
         return results
 
     def print_results(self, results: List[Dict[str, str]]) -> None:

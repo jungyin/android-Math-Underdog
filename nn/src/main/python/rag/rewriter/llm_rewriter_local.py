@@ -41,8 +41,8 @@ class LLMRewriter():
         input_ids = model_inputs.ids
         input_ids = np.array(input_ids,np.int64)
       
-        output = model.generate(input_ids,None,None)
-        response = tokenizer.decode(output,skip_special_tokens=True)
+        output = self.llm_model.generate(input_ids,None,None)
+        response = self.tokenizer.decode(output,skip_special_tokens=True)
         
         return response
 

@@ -15,15 +15,15 @@ sys_prompt = templates.SYSTEM_PROMPT
 question = "请给出一个关于如何使用RAG的例子"
 
 llm_model_path = "D:/code/transformer_models/models--Qwen--Qwen2.5-3B-Instruct/"
+llm_model_path = "D:/code/transformer_models/models--Qwen--Qwen2.5-Coder-0.5B-Instruct-GPTQ-Int8/"
 
 model = QwenMoelRun(llm_model_path)
 tokenizers = Tokenizer.from_file(llm_model_path+"tokenizer.json")
 model.set_tokenizer(tokenizers)
 
 app_config = ApplicationConfig()
-app_config.docs_path = "./docs"
-# app_config.llm_model_path = "D:/code/transformer_models/models--Qwen--Qwen2.5-Coder-3B-Instruct-GPTQ-Int8"
-app_config.llm_model_path = "D:/code/transformer_models/models--Qwen--Qwen2.5-3B-Instruct"
+app_config.docs_path = "d:/code/python/TrustRAG/docs"
+app_config.llm_model_path = llm_model_path
 
 retriever_config = DenseRetrieverConfig(
     model_name_or_path="D:/code/transformer_models/bge-large-zh-v1.5",
@@ -36,7 +36,7 @@ rerank_config = BgeRerankerConfig(
 
 app_config.retriever_config = retriever_config
 app_config.rerank_config = rerank_config
-application = RagApplication(app_config)
+application = RagApplication(tokenizers,model,app_config)
 application.init_vector_store()
 
 beijing_tz = pytz.timezone("Asia/Shanghai")
@@ -51,9 +51,9 @@ def shorten_label(text, max_length=10):
 
 
 def predict(question,
-            top_k,
-            use_web,
-            use_pattern,
+            top_k = 5,
+            use_web = 'Use',
+            use_pattern = "Rag",
             history=None):
     loguru.logger.info("User Question：" + question)
     if history is None:
@@ -81,7 +81,7 @@ def predict(question,
         search_text += web_content
     
         return history, search_text,''
-    else:
+    elif use_pattern == 'Rag':
         # Handle RAG mode
         loguru.logger.info('R.AG Mode:')
         response, _, contents, rewrite_query = application.chat(
@@ -97,7 +97,15 @@ def predict(question,
         if web_content:
             search_text += "----------【网络检索内容】-----------\n"
             search_text += web_content
-        checkboxes = []
+    
 
         return history, search_text, rewrite_query
+    else :
+        return history, '', ''
 
+
+history, search_text, rewrite_query = predict("请和我介绍一下有关rag技术的发展")
+
+print('history',history)
+print('search_text',search_text)
+print('rewrite_query',rewrite_query)

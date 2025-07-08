@@ -232,7 +232,7 @@ class BaseMoelRun(BaseMoel):
         prompt = prompt.encode("utf-8", 'ignore').decode('utf-8', 'ignore')
         print(prompt)
 
-        if(history[0]["role"] == 'system'):
+        if len(history)>0 and (history[0]["role"] == 'system'):
             history[0]["content"] = prompt
         else:
             history.insert(0,{"role":"system","content":prompt})
@@ -258,3 +258,4 @@ class BaseMoelRun(BaseMoel):
         history.append({"role":"assistant","content":response})
 
         return response,history
+    

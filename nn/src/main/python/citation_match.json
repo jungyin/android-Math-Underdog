@@ -1,0 +1,80 @@
+{
+    "question": "请和我介绍一下有关rag技术的发展",
+    "response": "可以参考的上下文：\n•··\ncn/console/trialcenter\n3.多模态向量抽索引构建\n向量索引是RAG系统的核心组件，主要包括:\n- 图像编码：调用CLIP模型获取图像向量\n- 向量存储：采用Faiss建立高效索引\n- 相似度检索：基于向量距离进行召回\n在做RAG之前，信息的信息和组织比较重要，不像文本数据集到处都存在，作为多模态RAG新手，我查阅了一些数据集，发现中文现成的多模态数据集特别少。下面为一些多模态中文数据集：\n- (1) 华为悟空\n悟空，华为，https://wukong-dataset.github.io/wukong-dataset/\nThe dataset contains 100 Million <image, text> pairs\n- (2) FLICKR的中文版\nflickr30k-cn、flickr8k-cn\nhttps://github.com/weiyuk/fluent-cap\n- (3)COCO中文版\nhttps://github.\n基于GoMate的RAG应用构建\n[大模型RAG智能问答挑战赛](https://challenge.xfyun.cn/topic/info?type=RAG-quiz)\n> 赛题需要参赛选手设计并实现一个RAG模型，该模型能够从给定的问题出发，检索知识库中的相关信息。利用检索到的信息，结合问题本身，生成准确、全面、权威的回答。1.数据说明\n数据集还可能包括一些未标注的文本，需要参赛者使用RAG技术中的检索增强方法来找到相关信息，并生成答案。这要求参赛者不仅要有强大的检索能力，还要能够生成准确、连贯且符合上下文的文本。测试集为模拟生成的用户提问，需要参赛者结合提问和语料完成回答。需注意，在问题中存在部分问题无法回答，需要选手设计合适的策略进行拒绝回答的逻辑。• corpus.txt.zip：语料库，每行为一篇新闻\n• test_question.csv：测试提问\n2.评审规则\n对于测试提问的回答，采用字符重合比例进行评价，分数最高为1。\nRAG技巧\n- [高级RAG(八): 自动合并检索(Auto-merging Retrieval)](https://zhuanlan.zhihu.com/p/678698001#/)\n- [RAG进阶笔记：RAG进阶](https://blog.csdn.net/qq_40206371/article/details/137025939#/)\n- [优化RAG索引策略：多向量索引与父文档检索技术](https://www.cnblogs.com/muzinan110/p/18541479#/)\n- [高级检索增强生成技术(RAG)全面指南：原理、分块、编码、索引、微调、Agent、展望](https://zhuanlan.zhihu.com/p/673922981#/)\n- [使用GPT + RAG项目实战经验总结](https://github.com/AI-Inception/RAG-In-Action/blob/main/README.md#/)\npng)\n上面是一个简单的demo体验，为了更好的体现多模态RAG的效果以及GLM-4V-Flash的能力，我们下面用两个案例来演示多模态RAG问答\n### 案例1：医学多模态RAG助手\n```python# 初始化配置\nmedical_retriever_config = MultimodalRetrieverConfig(\nmodel_name='ViT-B-16',\nindex_path='./index_medical',\nbatch_size=32,\ndim=512,\ndownload_root=\"data/chinese-clip-vit-base-patch16/\"\n)\n```\n```python# 初始化\nmedical_rag = MultimodalRAG(\napi_key=your_key,\nretriever_config=medical_retriever_config\n)\n```\n```python\n!ls data/examples/medical/ | head -n 10\n```\n医学知识讲座_01.png\n医学知识讲座_02.png\n医学知识讲座_03.png\n医学知识讲座_04.png\n医学知识讲座_05.png\n医学知识讲座_06.png\n医学知识讲座_07.png\n医学知识讲座_08.png\n医学知识讲座_09.png\n医学知识讲座_10.\n\\n## 5G新技术三个特征\\n### 新核心网\\n4G 核心网就像是在一块空地上建好的房子，每个房间都有其固定用途，不能用作他用。而 5G 核心网只提供了地皮和一些标准件，我们可以像搭积木一样随心所欲的按照自己喜欢的房间样式自由组合；\\n### 新传输",
+    "evidences": [
+        "cn/console/trialcenter\n3.多模态向量抽索引构建\n向量索引是RAG系统的核心组件，主要包括:\n- 图像编码：调用CLIP模型获取图像向量\n- 向量存储：采用Faiss建立高效索引\n- 相似度检索：基于向量距离进行召回\n在做RAG之前，信息的信息和组织比较重要，不像文本数据集到处都存在，作为多模态RAG新手，我查阅了一些数据集，发现中文现成的多模态数据集特别少。下面为一些多模态中文数据集：\n- (1) 华为悟空\n悟空，华为，https://wukong-dataset.github.io/wukong-dataset/\nThe dataset contains 100 Million <image, text> pairs\n- (2) FLICKR的中文版\nflickr30k-cn、flickr8k-cn\nhttps://github.com/weiyuk/fluent-cap\n- (3)COCO中文版\nhttps://github.",
+        "基于GoMate的RAG应用构建\n[大模型RAG智能问答挑战赛](https://challenge.xfyun.cn/topic/info?type=RAG-quiz)\n> 赛题需要参赛选手设计并实现一个RAG模型，该模型能够从给定的问题出发，检索知识库中的相关信息。利用检索到的信息，结合问题本身，生成准确、全面、权威的回答。1.数据说明\n数据集还可能包括一些未标注的文本，需要参赛者使用RAG技术中的检索增强方法来找到相关信息，并生成答案。这要求参赛者不仅要有强大的检索能力，还要能够生成准确、连贯且符合上下文的文本。测试集为模拟生成的用户提问，需要参赛选手结合提问和语料完成回答。需注意，在问题中存在部分问题无法回答，需要选手设计合适的策略进行拒绝回答的逻辑。• corpus.txt.zip：语料库，每行为一篇新闻\n• test_question.csv：测试提问\n2.评审规则\n对于测试提问的回答，采用字符重合比例进行评价，分数最高为1。",
+        "RAG技巧\n- [高级RAG(八): 自动合并检索(Auto-merging Retrieval)](https://zhuanlan.zhihu.com/p/678698001#/)\n- [RAG进阶笔记：RAG进阶](https://blog.csdn.net/qq_40206371/article/details/137025939#/)\n- [优化RAG索引策略：多向量索引与父文档检索技术](https://www.cnblogs.com/muzinan110/p/18541479#/)\n- [高级检索增强生成技术(RAG)全面指南：原理、分块、编码、索引、微调、Agent、展望](https://zhuanlan.zhihu.com/p/673922981#/)\n- [使用GPT + RAG项目实战经验总结](https://github.com/AI-Inception/RAG-In-Action/blob/main/README.md#/)",
+        "png)\n上面是一个简单的demo体验，为了更好的体现多模态RAG的效果以及GLM-4V-Flash的能力，我们下面用两个案例来演示多模态RAG问答\n### 案例1：医学多模态RAG助手\n```python# 初始化配置\nmedical_retriever_config = MultimodalRetrieverConfig(\nmodel_name='ViT-B-16',\nindex_path='./index_medical',\nbatch_size=32,\ndim=512,\ndownload_root=\"data/chinese-clip-vit-base-patch16/\"\n)\n```\n```python# 初始化\nmedical_rag = MultimodalRAG(\napi_key=your_key,\nretriever_config=medical_retriever_config\n)\n```\n```python\n!ls data/examples/medical/ | head -n 10\n```\n医学知识讲座_01.png\n医学知识讲座_02.png\n医学知识讲座_03.png\n医学知识讲座_04.png\n医学知识讲座_05.png\n医学知识讲座_06.png\n医学知识讲座_07.png\n医学知识讲座_08.png\n医学知识讲座_09.png\n医学知识讲座_10.",
+        "\\n## 5G新技术三个特征\\n### 新核心网\\n4G 核心网就像是在一块空地上建好的房子，每个房间都有其固定用途，不能用作他用。而 5G 核心网只提供了地皮和一些标准件，我们可以像搭积木一样随心所欲的按照自己喜欢的房间样式自由组合；\\n### 新传输网\\nSPN 具备前传、中传和回传的端到端组网能力，支持端到端网络硬切片能力，满足动态灵活连接需求；\\n### 新无线网\\n频谱效率提升 3 倍，连接数密度提升 10 倍，峰值速率提升 10 倍，空口时延迟为降低到原来的 1/10；\\n## 5G三大场景\\neMMB 增强移动宽带\\nuRLLC 超高可靠性与超低时延业务\\nmMTC 海量物联网通信\\n用户体验速率是 4G 的 10-100 倍，每平方公里的链接数是 4G 的 10 倍，典型场景的时延可低至 10ms 以内。\\n## 5G与4G的对比\\n5G 网络像一个魔方，它可以根据需求不停变形，从而满足个人或者企业不同的个性化需求。\\n4G 网络千人一面，5G 网络千人千面。"
+    ],
+    "selected_idx": [
+        0,
+        1,
+        2,
+        3,
+        4
+    ],
+    "selected_docs": [
+        {
+            "file_name": "default_file_name",
+            "content": "cn/console/trialcenter\n3.多模态向量抽索引构建\n向量索引是RAG系统的核心组件，主要包括:\n- 图像编码：调用CLIP模型获取图像向量\n- 向量存储：采用Faiss建立高效索引\n- 相似度检索：基于向量距离进行召回\n在做RAG之前，信息的信息和组织比较重要，不像文本数据集到处都存在，作为多模态RAG新手，我查阅了一些数据集，发现中文现成的多模态数据集特别少。下面为一些多模态中文数据集：\n- (1) 华为悟空\n悟空，华为，https://wukong-dataset.github.io/wukong-dataset/\nThe dataset contains 100 Million <image, text> pairs\n- (2) FLICKR的中文版\nflickr30k-cn、flickr8k-cn\nhttps://github.com/weiyuk/fluent-cap\n- (3)COCO中文版\nhttps://github.",
+            "chk_id": 0,
+            "doc_id": 1000,
+            "newsinfo": {
+                "title": "default_title",
+                "content": "cn/console/trialcenter\n3.多模态向量抽索引构建\n向量索引是RAG系统的核心组件，主要包括:\n- 图像编码：调用CLIP模型获取图像向量\n- 向量存储：采用Faiss建立高效索引",
+                "date": "default_date",
+                "source": "default_source"
+            }
+        },
+        {
+            "file_name": "default_file_name",
+            "content": "基于GoMate的RAG应用构建\n[大模型RAG智能问答挑战赛](https://challenge.xfyun.cn/topic/info?type=RAG-quiz)\n> 赛题需要参赛选手设计并实现一个RAG模型，该模型能够从给定的问题出发，检索知识库中的相关信息。利用检索到的信息，结合问题本身，生成准确、全面、权威的回答。1.数据说明\n数据集还可能包括一些未标注的文本，需要参赛者使用RAG技术中的检索增强方法来找到相关信息，并生成答案。这要求参赛者不仅要有强大的检索能力，还要能够生成准确、连贯且符合上下文的文本。测试集为模拟生成的用户提问，需要参赛选手结合提问和语料完成回答。需注意，在问题中存在部分问题无法回答，需要选手设计合适的策略进行拒绝回答的逻辑。• corpus.txt.zip：语料库，每行为一篇新闻\n• test_question.csv：测试提问\n2.评审规则\n对于测试提问的回答，采用字符重合比例进行评价，分数最高为1。",
+            "chk_id": 1,
+            "doc_id": 1001,
+            "newsinfo": {
+                "title": "default_title",
+                "content": "基于GoMate的RAG应用构建\n[大模型RAG智能问答挑战赛](https://challenge.xfyun.cn/topic/info?type=RAG-quiz)\n> 赛题需要参赛选手设计并实",
+                "date": "default_date",
+                "source": "default_source"
+            }
+        },
+        {
+            "file_name": "default_file_name",
+            "content": "RAG技巧\n- [高级RAG(八): 自动合并检索(Auto-merging Retrieval)](https://zhuanlan.zhihu.com/p/678698001#/)\n- [RAG进阶笔记：RAG进阶](https://blog.csdn.net/qq_40206371/article/details/137025939#/)\n- [优化RAG索引策略：多向量索引与父文档检索技术](https://www.cnblogs.com/muzinan110/p/18541479#/)\n- [高级检索增强生成技术(RAG)全面指南：原理、分块、编码、索引、微调、Agent、展望](https://zhuanlan.zhihu.com/p/673922981#/)\n- [使用GPT + RAG项目实战经验总结](https://github.com/AI-Inception/RAG-In-Action/blob/main/README.md#/)",
+            "chk_id": 2,
+            "doc_id": 1002,
+            "newsinfo": {
+                "title": "default_title",
+                "content": "RAG技巧\n- [高级RAG(八): 自动合并检索(Auto-merging Retrieval)](https://zhuanlan.zhihu.com/p/678698001#/)\n- [RAG进",
+                "date": "default_date",
+                "source": "default_source"
+            }
+        },
+        {
+            "file_name": "default_file_name",
+            "content": "png)\n上面是一个简单的demo体验，为了更好的体现多模态RAG的效果以及GLM-4V-Flash的能力，我们下面用两个案例来演示多模态RAG问答\n### 案例1：医学多模态RAG助手\n```python# 初始化配置\nmedical_retriever_config = MultimodalRetrieverConfig(\nmodel_name='ViT-B-16',\nindex_path='./index_medical',\nbatch_size=32,\ndim=512,\ndownload_root=\"data/chinese-clip-vit-base-patch16/\"\n)\n```\n```python# 初始化\nmedical_rag = MultimodalRAG(\napi_key=your_key,\nretriever_config=medical_retriever_config\n)\n```\n```python\n!ls data/examples/medical/ | head -n 10\n```\n医学知识讲座_01.png\n医学知识讲座_02.png\n医学知识讲座_03.png\n医学知识讲座_04.png\n医学知识讲座_05.png\n医学知识讲座_06.png\n医学知识讲座_07.png\n医学知识讲座_08.png\n医学知识讲座_09.png\n医学知识讲座_10.",
+            "chk_id": 3,
+            "doc_id": 1003,
+            "newsinfo": {
+                "title": "default_title",
+                "content": "png)\n上面是一个简单的demo体验，为了更好的体现多模态RAG的效果以及GLM-4V-Flash的能力，我们下面用两个案例来演示多模态RAG问答\n### 案例1：医学多模态RAG助手\n```pyt",
+                "date": "default_date",
+                "source": "default_source"
+            }
+        },
+        {
+            "file_name": "default_file_name",
+            "content": "\\n## 5G新技术三个特征\\n### 新核心网\\n4G 核心网就像是在一块空地上建好的房子，每个房间都有其固定用途，不能用作他用。而 5G 核心网只提供了地皮和一些标准件，我们可以像搭积木一样随心所欲的按照自己喜欢的房间样式自由组合；\\n### 新传输网\\nSPN 具备前传、中传和回传的端到端组网能力，支持端到端网络硬切片能力，满足动态灵活连接需求；\\n### 新无线网\\n频谱效率提升 3 倍，连接数密度提升 10 倍，峰值速率提升 10 倍，空口时延迟为降低到原来的 1/10；\\n## 5G三大场景\\neMMB 增强移动宽带\\nuRLLC 超高可靠性与超低时延业务\\nmMTC 海量物联网通信\\n用户体验速率是 4G 的 10-100 倍，每平方公里的链接数是 4G 的 10 倍，典型场景的时延可低至 10ms 以内。\\n## 5G与4G的对比\\n5G 网络像一个魔方，它可以根据需求不停变形，从而满足个人或者企业不同的个性化需求。\\n4G 网络千人一面，5G 网络千人千面。",
+            "chk_id": 4,
+            "doc_id": 1004,
+            "newsinfo": {
+                "title": "default_title",
+                "content": "\\n## 5G新技术三个特征\\n### 新核心网\\n4G 核心网就像是在一块空地上建好的房子，每个房间都有其固定用途，不能用作他用。而 5G 核心网只提供了地皮和一些标准件，我们可以像搭积木一样随心所",
+                "date": "default_date",
+                "source": "default_source"
+            }
+        }
+    ]
+}

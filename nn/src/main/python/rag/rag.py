@@ -19,7 +19,7 @@ from rag.reranker.bge_reranker import BgeReranker
 from rag.retrieval.dense_retriever import DenseRetriever
 from rag.document.chunk import TextChunker
 from rag.vector.embedding import FlagModelEmbedding
-from rag.quick_llm import llm_judger_local
+from rag.quick_llm.llm_judger_local import LLMJudger
 from rag.rewriter.llm_rewriter_local import LLMRewriter
 from rag.retrieval.web_retriever import DuckduckSearcher
 class ApplicationConfig():
@@ -36,7 +36,7 @@ class RagApplication():
         self.retriever = DenseRetriever(self.config.retriever_config,self.embedding_generator)
         self.reranker = BgeReranker(self.config.rerank_config)
         self.llm = llm_model
-        self.llm_judger = llm_judger_local(tokenizers,llm_model)
+        self.llm_judger = LLMJudger(tokenizers,llm_model)
         self.mc = MatchCitation()
         self.tc=TextChunker()
         self.web_searcher = DuckduckSearcher(proxy="socks5h://127.0.0.1:1080", timeout=20)
