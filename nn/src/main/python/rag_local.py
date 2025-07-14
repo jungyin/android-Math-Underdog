@@ -16,13 +16,16 @@ question = "请给出一个关于如何使用RAG的例子"
 
 llm_model_path = "D:/code/transformer_models/models--Qwen--Qwen2.5-3B-Instruct/"
 llm_model_path = "D:/code/transformer_models/models--Qwen--Qwen2.5-Coder-0.5B-Instruct-GPTQ-Int8/"
+llm_model_path = "D:/code/transformer_models/models--Qwen--Qwen2.5-0.5B-Instruct/"
 
 model = QwenMoelRun(llm_model_path)
+model.repetition_penalty = 1.3
 tokenizers = Tokenizer.from_file(llm_model_path+"tokenizer.json")
 model.set_tokenizer(tokenizers)
 
 app_config = ApplicationConfig()
 app_config.docs_path = "d:/code/python/TrustRAG/docs"
+app_config.docs_path = "d:/code/py/TrustRAG-main/docs"
 app_config.llm_model_path = llm_model_path
 
 retriever_config = DenseRetrieverConfig(
@@ -106,6 +109,6 @@ def predict(question,
 
 history, search_text, rewrite_query = predict("请和我介绍一下有关rag技术的发展")
 
-print('history',history)
-print('search_text',search_text)
-print('rewrite_query',rewrite_query)
+print('history:',history)
+print('search_text:',search_text)
+print('rewrite_query:',rewrite_query)

@@ -30,6 +30,8 @@ class LLMRewriter():
             {"role": "system", "content": self.system_prompt},
             {"role": "user", "content":prompt }
         ]
+
+
         rendered_chat = self.llm_model.compiled_template.render(messages=messages, add_generation_prompt=True, **self.llm_model.template_kwargs)
    
         model_inputs = self.tokenizer.encode_batch(
@@ -40,8 +42,10 @@ class LLMRewriter():
 
         input_ids = model_inputs.ids
         input_ids = np.array(input_ids,np.int64)
-      
+        cache_temperature = self.llm_model.temperature
+        self.llm_model.temperature = 1e-15
         output = self.llm_model.generate(input_ids,None,None)
+        self.llm_model.temperature = cache_temperature
         response = self.tokenizer.decode(output,skip_special_tokens=True)
         
         return response

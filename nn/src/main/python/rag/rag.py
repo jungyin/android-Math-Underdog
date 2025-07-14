@@ -75,7 +75,7 @@ class RagApplication():
     def chat(self, question: str = '', top_k: int = 5):
         rewrite_query = self.llm_rewriter.rewrite(question)
         rewrite_query = "\n".join(f"{i + 1}. {query.strip()};" for i, query in enumerate(rewrite_query.split(";")))
-        loguru.logger.info("Query Rewrite Results:" + rewrite_query)
+        loguru.logger.info("Query Rewrite Resul0ts:" + rewrite_query)
         contents = self.retriever.retrieve(query=question+" "+rewrite_query, top_k=top_k)
         loguru.logger.info("Retrieve Results：")
         loguru.logger.info(contents)
@@ -90,18 +90,19 @@ class RagApplication():
         context_content = ""
         for idx, item in enumerate(contents):
             print(idx + 1)
-            context_content = context_content + str(idx + 1) + "." + item['text'] + "\n"
+            if(str(item["label"]) == '1'):
+                context_content = context_content + str(idx + 1) + "." + item['text'] + "\n"
         print(context_content)
-        user_input = CHAT_PROMPT_TEMPLATES['RAG_PROMPT_TEMPALTE'].format(question=question, context=context_content)
-        loguru.logger.info("User Request：\n" + user_input)
+        # user_input = CHAT_PROMPT_TEMPLATES['RAG_PROMPT_TEMPALTE'].format(question=question, context=context_content)
+        # loguru.logger.info("User Request：\n" + user_input)
 
-        history = [
-            {"role": "user", "content": user_input}
-        ]
+        # history = [
+            # {"role": "user", "content": user_input}
+        # ]
 
-        content = '\n'.join([content['text'] for content in contents])
+        content = '\n'.join([content['text'] if str(content['label']) == '1' else '' for content in contents])
         print(contents)
-        result, history = self.llm.chat(user_input, [], content)
+        result, history = self.llm.chat('', [], question,content)
         
         # 默认值定义
         selected_docs = []

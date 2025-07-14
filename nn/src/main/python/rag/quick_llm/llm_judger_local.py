@@ -51,8 +51,10 @@ class LLMJudger():
 
             input_ids = model_inputs.ids
             input_ids = np.array(input_ids,np.int64)
-
+            cache_temperature = self.llm_model.temperature
+            self.llm_model.temperature = 1e-15
             output = self.llm_model.generate(input_ids,None,None)
+            self.llm_model.temperature = cache_temperature
             response = self.tokenizer.decode(output,skip_special_tokens=True)
             # 确保返回值是 0 或 1
             try:

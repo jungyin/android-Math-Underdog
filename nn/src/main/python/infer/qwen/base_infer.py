@@ -16,7 +16,7 @@ class BaseMoelRun(BaseMoel):
         self.cacheinput = []
         past_key_value_type = np.float32
         self.empty_past_key_value = self._build_past_key_value(past_key_value_type)
-
+        self.repetition_penalty = 1.05
         pid  = os.getpid()
         self.process = psutil.Process(pid)
 
@@ -143,7 +143,10 @@ class BaseMoelRun(BaseMoel):
 
    
         # 添加 RepetitionPenaltyLogitsProcessor
-        repetition_penalty = 1.05
+        if self.repetition_penalty is None:
+            repetition_penalty = 1.05
+        else :
+            repetition_penalty = self.repetition_penalty
         # 用logits processor 来控制生成的过程
         self.logits_processor = RepetitionPenaltyLogitsProcessor(repetition_penalty)
         # 用stopping_criteria控制结束的过程
@@ -223,12 +226,12 @@ class BaseMoelRun(BaseMoel):
         #这里结束推理，进行下一步操作
         return input_ids[0][input_ids_length:]
     
-    def chat(self, prompt: str, history:List=None, content: str = '', llm_only: bool = False) -> tuple[Any, Any]:
+    def chat(self, prompt: str, history:List=None, content: str = '',refer_content:str = '', llm_only: bool = False) -> tuple[Any, Any]:
         if llm_only:
             prompt = prompt
         else:
-            prompt = CHAT_PROMPT_TEMPLATES['GLM_PROMPT_TEMPALTE'].format(system_prompt=SYSTEM_PROMPT, question=prompt,
-                                                                    context=content)
+            prompt = CHAT_PROMPT_TEMPLATES['GLM_PROMPT_TEMPALTE'].format(system_prompt=SYSTEM_PROMPT,
+                                                                    context=refer_content)
         prompt = prompt.encode("utf-8", 'ignore').decode('utf-8', 'ignore')
         print(prompt)
 

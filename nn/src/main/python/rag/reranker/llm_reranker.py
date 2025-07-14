@@ -25,7 +25,7 @@ from transformers import (
     T5Tokenizer,
 )
 
-from trustrag.modules.reranker.base import BaseReranker
+from rag.reranker.base import BaseReranker
 
 setwise_likelihood = """
 你是一个专业的搜索算法助手，可以根据找出与查询最相关的段落。
