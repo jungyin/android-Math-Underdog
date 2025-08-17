@@ -90,6 +90,8 @@ class MCPServer:
 
     def get_available_tools(self) -> List[Dict[str, Any]]:
         """获取所有可用工具的描述"""
+        # 在此之前，先屏蔽掉一些私有化的mcp
+        excluded_tools = {'local_llm'}  # 使用 set 更高效
         return [
             {
                 "name": tool.name,
@@ -98,6 +100,7 @@ class MCPServer:
                 "required_params": tool.required_params
             }
             for tool in self.tools.values()
+            if tool.name not in excluded_tools
         ]
 
     async def handle_client_message(self, websocket: websockets.WebSocketServerProtocol):
@@ -147,7 +150,6 @@ class MCPServer:
                                 error="Tool call failed or tool not found",
                                 id=request.id
                             )
-                    
                     else:
                         # 转发工具调用给对应的客户端
                         tool_response = await self.call_tool(request.method, request.params)
@@ -174,7 +176,7 @@ class MCPServer:
                     break
 
     async def start(self):
-        async with websockets.serve(self.handle_client_message, self.host, self.port):
+        async with websockets.serve(self.handle_client_message, self.host, self.port,    ping_interval=300,ping_timeout=300, close_timeout=300,):
             print(f"MCP Server started on ws://{self.host}:{self.port}")
             await asyncio.Future()  # 运行直到被中断
 

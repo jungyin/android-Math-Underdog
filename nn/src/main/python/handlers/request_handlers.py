@@ -4,7 +4,7 @@ import infer.interface_api as infer
 import numpy as np
 
 
-infer.select_llm_model("qwen0_5b_torch")
+# infer.select_llm_model("qwen0_5b_torch")
 # infer.select_llm_model("qwen0_5b_openvino")
 
 

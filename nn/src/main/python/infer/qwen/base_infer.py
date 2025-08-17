@@ -19,6 +19,9 @@ class BaseMoelRun(BaseMoel):
         self.repetition_penalty = 1.05
         pid  = os.getpid()
         self.process = psutil.Process(pid)
+      
+        self.generation_task = None
+        self._stop_requested = False  # 防止重复处理
 
     def _build_past_key_value(self,dtype:np.dtype = np.float16):
         
@@ -32,7 +35,12 @@ class BaseMoelRun(BaseMoel):
         
         return np.zeros([num_hidden_layers,kvszie]+qvshape,dtype=dtype)
 
-# 预处理 qwen2的输入数据
+    def build_input_text(self,input_message):
+        rendered_chat = self.compiled_template.render(
+            messages=input_message, add_generation_prompt=True, **self.template_kwargs
+        )
+        return rendered_chat
+    # 预处理 qwen2的输入数据
     def prepare_inputs_for_generation(self, input_ids,position_ids=None, attention_mask=None, past_key_values=None,  inputs_embeds=None,past_length = None):
 
         if attention_mask is None:
@@ -223,7 +231,6 @@ class BaseMoelRun(BaseMoel):
             this_peer_finished = unfinished_sequences.max() == 0
             input_ids = input_ids
         # self.cacheinput .append(ci)
-        #这里结束推理，进行下一步操作
         return input_ids[0][input_ids_length:]
     
     def chat(self, prompt: str, history:List=None, content: str = '',refer_content:str = '', llm_only: bool = False) -> tuple[Any, Any]:

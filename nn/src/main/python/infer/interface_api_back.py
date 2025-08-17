@@ -76,12 +76,12 @@ def stop_speak():
     global laststr
     global check_out_label
     global STATUS
-    
+    global llm_model
     check_out_label = False
     # laststr=""
     laststr_len = len(laststr)
     
-    execute_tool("local_llm",**{"method":"stopGenerate"})
+    llm_model.stopGenerate()
     # 轮询次数，最多20*0.1秒，也就是2秒
     index = 20
     # 是否中止成功，如果成功为true，否则false
@@ -279,17 +279,33 @@ def thread_speak(context):
   
     input_message.append( {"role": "user", "content": context})
 
+    rendered_chat = llm_model.compiled_template.render(
+        messages=input_message, add_generation_prompt=True, **llm_model.template_kwargs
+    )
 
+    
+
+    encoding = local_token.encode_batch(
+            [rendered_chat],
+            add_special_tokens=True,
+            is_pretokenized=False,
+        )
+        
+    input_ids = encoding[0].ids
+    input_ids = np.array(input_ids,np.int64)
     cacheNow = time.time()
     cacheTimes = []
 
-    result = execute_tool("local_llm",**{"method":"generate","messages":input_message})
-    output = result["result"]
+    
 
-    # input_message = mcp_run(output,input_message)
+    output = llm_model.generate(input_ids,progress,local_token)
+    output  = local_token.decode(output,skip_special_tokens=True)
+
+
+    input_message = mcp_run(output,input_message)
 
     STATUS = LmActionType.STOP
-    laststr = output
+    # laststr = output
 
     # 将本轮模型的输出结果和用户的对话结果记录下来
     cc = np.array(cacheTimes)
@@ -330,9 +346,8 @@ def check_llm_model():
     校队当前模型是否已加载
     return  msg:是否加载成功,True为加载成功,false为没有
     """
-    # global llm_model
-    # return False if llm_model is None else True
-    return True
+    global llm_model
+    return False if llm_model is None else True
 
 def history_message():
     global message

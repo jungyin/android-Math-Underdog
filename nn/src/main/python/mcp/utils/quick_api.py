@@ -55,6 +55,7 @@ class QuickApi:
             if websocket:
                 await websocket.close()
 
+    
 
 if __name__ == "__main__":
     qa = QuickApi()
