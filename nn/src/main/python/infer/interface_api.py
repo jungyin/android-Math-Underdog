@@ -146,7 +146,12 @@ def mcp_run(llm_response,conversation_history):
     current_turn = 0
     response_content = llm_response
     
+  
+
+  
     extracted_data = []
+    
+    find = False
     while current_turn < max_turns:
         current_turn += 1
         print(f"\n--- Turn {current_turn} ---")
@@ -160,13 +165,11 @@ def mcp_run(llm_response,conversation_history):
         # re.DOTALL (re.S) 标志让 '.' 也能匹配换行符
         pattern = re.compile(r"<tool_code>(.*?)</tool_code>", re.DOTALL)
         
-        find = False
         # 使用 finditer 查找所有非重叠匹配，并返回迭代器
         for match in pattern.finditer(response_content):
             find = True
             tool_call_str = match.group(1).strip() # match.group(1) 获取第一个捕获组的内容
             tool_call_data = json.loads(tool_call_str)
- 
             try:
                 # 解析工具调用指令
                 tool_name = tool_call_data["tool_name"]
@@ -181,31 +184,18 @@ def mcp_run(llm_response,conversation_history):
                 
                 # 6. 将工具结果作为上下文回传给大模型
                 tool_result_message = {
-                    "role": "tool", # 或者 'function' role in OpenAI's API
-                    "name": tool_name,
-                    "content": json.dumps(tool_result, ensure_ascii=False)
+                    "role": "assistant", # 或者 'function' role in OpenAI's API
+                    # "name": tool_name,
+                    # "content": json.dumps(tool_result, ensure_ascii=False)
+                    "content": tool_result["result"]
                 }
                 conversation_history.append(tool_result_message)
                 
                 # 再次循环，让大模型根据工具结果生成回答
 
-
-                rendered_chat = llm_model.compiled_template.render(
-                    messages=conversation_history, add_generation_prompt=True, **llm_model.template_kwargs
-                )
-
-                encoding = local_token.encode_batch(
-                        [rendered_chat],
-                        add_special_tokens=True,
-                        is_pretokenized=False,
-                    )
-                    
-                input_ids = encoding[0].ids
-                input_ids = np.array(input_ids,np.int64)
-                output = llm_model.generate(input_ids,None,local_token)
-                response_content  = local_token.decode(output,skip_special_tokens=True)
-                conversation_history.append({"role": "assistant", "content": response_content})
-
+                output = call_llama(conversation_history,None)["result"]
+                conversation_history.append({"role": "assistant", "content": output})
+                response_content = output
                 continue # 进入下一轮循环，LLM会看到Tool Result并继续生成
                 
             except json.JSONDecodeError:
@@ -216,8 +206,9 @@ def mcp_run(llm_response,conversation_history):
                 print("Error: LLM returned malformed tool_code (missing name/parameters).")
                 conversation_history.append({"role": "tool", "name": "error", "content": "LLM returned malformed tool_code."})
                 break # 终止循环
-        if(not find):
-            break
+    if(not find):
+        conversation_history.append({"role": "assistant", "content": response_content})
+        
 
     return conversation_history
         
@@ -282,14 +273,14 @@ def thread_speak(context):
 
     cacheNow = time.time()
     cacheTimes = []
+    
+    result = call_llama(input_message,progress)
+    # output = result["result"]
 
-    result = execute_tool("local_llm",**{"method":"generate","messages":input_message})
-    output = result["result"]
-
-    # input_message = mcp_run(output,input_message)
+    input_message = mcp_run(result["result"],input_message)
 
     STATUS = LmActionType.STOP
-    laststr = output
+    laststr = input_message[-1]["content"]
 
     # 将本轮模型的输出结果和用户的对话结果记录下来
     cc = np.array(cacheTimes)
@@ -304,6 +295,9 @@ def thread_speak(context):
 
     message.append({"role": "user", "content": context})
     message.append({"role": "assistant", "content": laststr,"mean_tokens" :mean_tokens,"sum_tokens":sum_tokens})
+
+def call_llama(messages,call_func):
+    return execute_tool("local_llm",**{"method":"generate","messages":messages})
 
 def speak(context):
     """
@@ -423,6 +417,7 @@ def build_tool_prompt(tools_data):
         1.  **根据用户请求，决定是否需要使用外部工具。**
         2.  **如果需要，请严格按照以下格式输出工具调用指令。在输出工具指令前，请先思考你为什么要调用此工具。**
         3.  **在工具执行完成后，你会收到工具的输出。请根据工具输出的内容，继续完成任务或直接回答用户。**
+        4.  **请注意，每次调用外部工具时，<tool_code></tool_code>为强制使用的开始结束格式，每次调用都需要携带。**
         **工具调用格式示例 (JSON 格式):**
         <tool_code>
         {{
